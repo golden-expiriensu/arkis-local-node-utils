@@ -4,7 +4,7 @@ import { getFactoryAddress, getProvider } from '../provider'
 
 type Asset = {
   token: string
-  amount: BigNumberish
+  amount: string
 }
 
 export async function calculateRiskFactor(
@@ -13,14 +13,14 @@ export async function calculateRiskFactor(
 ): Promise<{
   collateral: Array<Asset>
   leverage: Asset
-  riskFactor: BigNumberish
+  riskFactor: string
   timestamp: number
-  nonce: BigNumberish
+  nonce: string
   signature: string
 }> {
-  const riskFactor: BigNumberish = getRiskFactor(collateral, leverage)
+  const riskFactor: string = getRiskFactor(collateral, leverage)
   const timestamp: number = getCurrentTimestamp()
-  const nonce: BigNumber = getCurrentNonce()
+  const nonce: string = getCurrentNonce()
   const factory: string = await getFactoryAddress()
   const chainId: number = await getChainId()
 
@@ -51,16 +51,16 @@ export async function calculateRiskFactor(
   }
 }
 
-function getRiskFactor(_collateral: Array<Asset>, _leverage: Asset): BigNumberish {
-  return parseUnits('1.5', 32)
+function getRiskFactor(_collateral: Array<Asset>, _leverage: Asset): string {
+  return parseUnits('1.5', 32).toHexString()
 }
 
 function getCurrentTimestamp(): number {
   return Math.floor(Date.now() / 1000)
 }
 
-function getCurrentNonce(): BigNumber {
-  return BigNumber.from(Math.floor(Math.random() * 1000000))
+function getCurrentNonce(): string {
+  return BigNumber.from(Math.floor(Math.random() * 1000000)).toHexString()
 }
 
 async function getChainId(): Promise<number> {

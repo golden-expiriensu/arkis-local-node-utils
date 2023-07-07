@@ -12,5 +12,5 @@ export function getProviderUrl(): string {
 
 export async function getFactoryAddress(): Promise<string> {
   const res = await axios.get(getProviderUrl() + 'address/marginAccount')
-  return getAddress(res.data.trim())
+  return getAddress(res.data)
 }
