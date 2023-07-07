@@ -68,5 +68,7 @@ async function getChainId(): Promise<number> {
 }
 
 function getSigner(): Signer {
-  return new Wallet('5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a')
+    const privateKey = process.env.SIGNER_PRIVATE_KEY
+    if (!privateKey) throw new Error('SIGNER_PRIVATE_KEY is not set in .env')
+  return new Wallet(privateKey)
 }

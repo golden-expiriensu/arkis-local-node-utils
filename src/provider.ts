@@ -7,10 +7,12 @@ export function getProvider(): ethers.providers.Provider {
 }
 
 export function getProviderUrl(): string {
-  return 'http://localhost:4000/'
+  const url = process.env.LOCAL_NODE_URL
+  if (!url) throw new Error('LOCAL_NODE_URL is not set in .env')
+  return url
 }
 
 export async function getFactoryAddress(): Promise<string> {
-  const res = await axios.get(getProviderUrl() + 'address/marginAccount')
+  const res = await axios.get(getProviderUrl() + '/address/marginAccount')
   return getAddress(res.data)
 }
