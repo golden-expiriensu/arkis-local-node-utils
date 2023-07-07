@@ -1,6 +1,6 @@
 {
   "name": "playground",
-  "script": {
+  "scripts": {
     "register": "pnpm ts-node ./src/register/index.ts"
   },
   "devDependencies": {
