@@ -1,8 +1,7 @@
 {
   "name": "playground",
   "scripts": {
-    "fetch:ab": "pnpm ts-node ./src/events/fetchAccountBorrowed.ts",
-    "register": "pnpm ts-node ./src/register/index.ts"
+    "strategy": "pnpm ts-node src/executeStrategy.ts"
   },
   "devDependencies": {
     "@types/node": "^20.4.0",
