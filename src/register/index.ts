@@ -5,7 +5,7 @@ import { constants } from 'ethers'
 import { getEndpoint } from '../getEndpoint'
 import axios from 'axios'
 import { fetchAccountBorrowed } from '../events/fetchAccountBorrowed'
-import { getAddress } from '../getAddress'
+import { getAddress } from '../addressUtils'
 
 function isETH(token: string): boolean {
   return token.toLowerCase() === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'.toLowerCase()

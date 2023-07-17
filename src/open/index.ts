@@ -1,7 +1,7 @@
 import { getEndpoint } from '../getEndpoint'
 import account from '../account.json'
 import axios from 'axios'
-import { getAddress } from '../getAddress'
+import { getAddress } from '../addressUtils'
 
 async function generateSumbitPlanBody(marginAccountBytes32: string): Promise<Object> {
   return {
