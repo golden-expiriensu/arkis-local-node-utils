@@ -2,14 +2,23 @@
 
 1. Set all required variables as described in .env.example in .env file
 2. Install all required packages
-    ``` bash
-    pnpm i
-    ```
+   ```bash
+   pnpm i
+   ```
+
+Account owner, collateral and leverage configurable in "src/account.json" file
+
+## Fetch events
+
+- AccountBorrowed
+  ```bash
+  pnpm fetch:ab
+  ```
 
 ## Register
-Steps:
-1. If you want to use other setting than the default, change src/register/index.ts hardcoded values
-2. 
-    ```bash
-    pnpm register
-    ```
+
+Register new account
+
+```bash
+pnpm register
+```
