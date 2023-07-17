@@ -1,6 +1,8 @@
 import { ethers } from 'ethers'
 import axios from 'axios'
 import { getAddress } from 'ethers/lib/utils'
+import { getEndpoint } from './getEndpoint'
+require('dotenv').config()
 
 export function getProvider(): ethers.providers.Provider {
   return new ethers.providers.JsonRpcProvider(getProviderUrl())
@@ -13,6 +15,6 @@ export function getProviderUrl(): string {
 }
 
 export async function getFactoryAddress(): Promise<string> {
-  const res = await axios.get(getProviderUrl() + '/address/marginAccount')
+  const res = await axios.get(getEndpoint('factoryAddress'))
   return getAddress(res.data)
 }
