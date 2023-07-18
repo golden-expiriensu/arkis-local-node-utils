@@ -14,6 +14,10 @@ export function getProviderUrl(): string {
   return url
 }
 
+export function getServerUrl(): string {
+  return process.env.SERVER_URL ?? getProviderUrl()
+}
+
 export async function getFactoryAddress(): Promise<string> {
   const res = await axios.get(getEndpoint('factoryAddress'))
   return getAddress(res.data)

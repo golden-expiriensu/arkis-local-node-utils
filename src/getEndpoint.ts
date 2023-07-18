@@ -1,19 +1,19 @@
-import { getProviderUrl } from './provider'
+import { getServerUrl } from './provider'
 
 type EndpointName = 'register' | 'submitPlan' | 'tryClose' | 'factoryAddress' | 'synchronizationBlock'
 
 export function getEndpoint(name: EndpointName): string {
   switch (name) {
     case 'register':
-      return `${getProviderUrl()}/register`
+      return `${getServerUrl()}/register`
     case 'submitPlan':
-      return `${getProviderUrl()}/submitPlan`
+      return `${getServerUrl()}/submitPlan`
     case 'tryClose':
-      return `${getProviderUrl()}/tryCloseMarginAccount`
+      return `${getServerUrl()}/tryCloseMarginAccount`
     case 'factoryAddress':
-      return `${getProviderUrl()}/address/marginAccount`
+      return `${getServerUrl()}/address/marginAccount`
     case 'synchronizationBlock':
-      return `${getProviderUrl()}/synchronizationBlock`
+      return `${getServerUrl()}/synchronizationBlock`
     default:
       throw new Error(`Unknown endpoint ${name}`)
   }
