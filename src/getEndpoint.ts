@@ -1,15 +1,13 @@
 import { getServerUrl } from './provider'
 
-type EndpointName = 'register' | 'submitPlan' | 'tryClose' | 'factoryAddress' | 'synchronizationBlock'
+type EndpointName = 'setStorageAt' | 'setBalance' | 'factoryAddress' | 'synchronizationBlock'
 
 export function getEndpoint(name: EndpointName): string {
   switch (name) {
-    case 'register':
-      return `${getServerUrl()}/register`
-    case 'submitPlan':
-      return `${getServerUrl()}/submitPlan`
-    case 'tryClose':
-      return `${getServerUrl()}/tryCloseMarginAccount`
+    case 'setStorageAt':
+      return `${getServerUrl()}/setStorageAt`
+    case 'setStorageAt':
+      return `${getServerUrl()}/setStorageAt`
     case 'factoryAddress':
       return `${getServerUrl()}/address/marginAccount`
     case 'synchronizationBlock':
