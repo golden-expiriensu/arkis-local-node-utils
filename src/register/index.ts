@@ -1,12 +1,28 @@
 import { formatUnits } from 'ethers/lib/utils'
 import { calculateRiskFactor } from './marginEngine'
 import account from '../account.json'
-import { Contract, constants } from 'ethers'
+import { Contract, Signer, constants } from 'ethers'
 import { fetchAccountBorrowed } from '../events/fetchAccountBorrowed'
-import { getAddress } from '../utils'
+import { getAddress, setBalance, setTokenBalance } from '../utils'
+import ERC20 from '../artifacts/IERC20.json'
 
 function isETH(token: string): boolean {
   return token.toLowerCase() === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'.toLowerCase()
+}
+
+async function setTokenBalanceAndApprove(
+  tokenAddress: string,
+  account: Signer,
+  to: string,
+  amount: string,
+): Promise<void> {
+  const token = new Contract(tokenAddress, ERC20, account)
+
+  await setTokenBalance(token, await account.getAddress(), amount)
+
+  if ((await token.allowance(await account.getAddress(), to)) < amount) {
+    await token.approve(to, constants.MaxUint256)
+  }
 }
 
 export async function registerMarginAccount(factory: Contract): Promise<string> {
@@ -17,6 +33,14 @@ export async function registerMarginAccount(factory: Contract): Promise<string> 
   const value = account.collateral.reduce((prev, curr) => {
     return isETH(curr.token) ? prev.add(curr.amount) : prev
   }, constants.Zero)
+
+  for (const collateral of account.collateral) {
+    if (isETH(collateral.token)) {
+      await setBalance(await factory.signer.getAddress(), constants.MaxUint256.toHexString())
+    } else {
+      await setTokenBalanceAndApprove(collateral.token, factory.signer, factory.address, collateral.amount)
+    }
+  }
 
   await factory.registerMarginAccount(
     account.owner,
