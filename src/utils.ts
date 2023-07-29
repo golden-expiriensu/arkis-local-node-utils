@@ -54,5 +54,5 @@ export async function setBalance(acc: any, value: string): Promise<void> {
   const user = typeof acc === 'string' ? acc : acc.address
   value = hexZeroPad(hexlify(value), 32)
 
-  await axios.post(getEndpoint('setStorageAt'), { user, value })
+  await axios.post(getEndpoint('setBalance'), { user, value })
 }
