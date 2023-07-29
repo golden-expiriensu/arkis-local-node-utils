@@ -19,6 +19,8 @@ async function main() {
   }
 
   while (strategy.suspended-- > 0) {
+    console.log('Suspended strategy is temporarily unavailable')
+    break
     const registered = await registerMarginAccount(factory)
     const opened = await openMarginAccount(factory, registered)
     await closeMarginAccount(factory, opened, true)

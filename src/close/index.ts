@@ -37,7 +37,7 @@ export async function closeMarginAccount(
     onComplete: [],
   }
 
-  factory.tryCloseMarginAccount(getAddress(marginAccountBytes32), liquidationPlan)
+  await factory.tryCloseMarginAccount(getAddress(marginAccountBytes32), liquidationPlan)
 
   console.log(`${onlySuspend ? 'Suspended' : 'Closed'} margin account ${getAddress(marginAccountBytes32)}`)
   return marginAccountBytes32
