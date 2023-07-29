@@ -1,9 +1,9 @@
 import axios from 'axios'
-import { BigNumber, Contract, Signer, Wallet } from 'ethers'
+import { Contract, Wallet } from 'ethers'
 import { keccak256, concat, hexZeroPad, hexlify } from 'ethers/lib/utils'
-import { getEndpoint } from './getEndpoint'
+import { getEndpoint } from './provider'
 import { getFactoryAddress } from './provider'
-import Factory from './MarginAccountFactory.json'
+import Factory from './artifacts/MarginAccountFactory.json'
 
 export function getAddress(address: string): string {
   return address.replace('0x000000000000000000000000', '0x')
@@ -58,6 +58,9 @@ export async function setBalance(acc: any, value: string): Promise<void> {
 }
 
 export async function getFactoryAsOwner(): Promise<Contract> {
-  const acc = new Wallet('0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d')
-  return new Contract(await getFactoryAddress(), Factory.abi, acc)
+  return new Contract(await getFactoryAddress(), Factory.abi, getOwner())
+}
+
+export function getOwner(): Wallet {
+  return new Wallet('0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d')
 }
