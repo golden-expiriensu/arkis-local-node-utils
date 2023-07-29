@@ -1,12 +1,10 @@
 import axios from 'axios'
-import { Contract, Wallet } from 'ethers'
+import { Contract, utils } from 'ethers'
 import { keccak256, concat, hexZeroPad, hexlify } from 'ethers/lib/utils'
 import { getEndpoint } from './provider'
-import { getFactoryAddress } from './provider'
-import Factory from './artifacts/MarginAccountFactory.json'
 
 export function getAddress(address: string): string {
-  return address.replace('0x000000000000000000000000', '0x')
+  return utils.getAddress(address.replace('0x000000000000000000000000', '0x'))
 }
 
 const DEFAULT_ERC20_BALANCES_SLOT = 0
@@ -19,9 +17,10 @@ const BALANCES_SLOT_EXCEPTIONS = Object.fromEntries([
   [getAddress('0xdac17f958d2ee523a2206206994597c13d831ec7'), 2],
 ])
 
-export async function setTokenBalance(token: Contract, acc: any, amount: string): Promise<void> {
+export async function setTokenBalance(token: Contract, acc: any, value: string): Promise<void> {
   const accAddress = typeof acc === 'string' ? acc : acc.address
   let slot = DEFAULT_ERC20_BALANCES_SLOT
+  value = hexZeroPad(hexlify(value), 32)
 
   if (getAddress(token.address) in BALANCES_SLOT_EXCEPTIONS) slot = BALANCES_SLOT_EXCEPTIONS[getAddress(token.address)]
 
@@ -29,22 +28,22 @@ export async function setTokenBalance(token: Contract, acc: any, amount: string)
   await axios.post(getEndpoint('setStorageAt'), {
     account: token.address,
     index: indexNew,
-    value: amount,
+    value,
   })
 
   // Try to handle slots for contracts written in old solidity
-  if ((await token.balanceOf(accAddress)).lt(amount)) {
+  if ((await token.balanceOf(accAddress)).lt(value)) {
     const indexOld = keccak256(concat([hexZeroPad(accAddress, 32), hexZeroPad(hexlify(slot), 32)]))
     await axios.post(getEndpoint('setStorageAt'), {
       account: token.address,
       index: indexOld,
-      value: amount,
+      value,
     })
 
     // If balance is not set as expected, then it means that token contract stores balances in an unusual slot,
     // in order to add it to exceptions list, check source contract, find "balances" mapping,
     // count it's position (starting from 0) and add it to BALANCES_SLOT_EXCEPTIONS
-    if ((await token.balanceOf(accAddress)).lt(amount))
+    if ((await token.balanceOf(accAddress)).lt(value))
       throw new Error(
         `Token ${token.address} seems to have an exceptional balances mapping slot, please add it to the exceptions list`,
       )
@@ -53,14 +52,7 @@ export async function setTokenBalance(token: Contract, acc: any, amount: string)
 
 export async function setBalance(acc: any, value: string): Promise<void> {
   const user = typeof acc === 'string' ? acc : acc.address
+  value = hexZeroPad(hexlify(value), 32)
 
   await axios.post(getEndpoint('setStorageAt'), { user, value })
-}
-
-export async function getFactoryAsOwner(): Promise<Contract> {
-  return new Contract(await getFactoryAddress(), Factory.abi, getOwner())
-}
-
-export function getOwner(): Wallet {
-  return new Wallet('0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d')
 }

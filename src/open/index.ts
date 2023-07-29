@@ -1,7 +1,7 @@
 import { Contract } from 'ethers'
 import account from '../account.json'
 import { getAddress, setBalance, setTokenBalance } from '../utils'
-import ERC20 from '../IERC20.json'
+import ERC20 from '../artifacts/IERC20.json'
 
 export async function openMarginAccount(factory: Contract, marginAccountBytes32: string): Promise<string> {
   if (getAddress(account.leverage.token) === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {

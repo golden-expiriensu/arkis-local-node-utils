@@ -3,11 +3,11 @@
   "collateral": [
     {
       "token": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
-      "amount": "10000000000000000000"
+      "amount": "0x8AC7230489E80000"
     }
   ],
   "leverage": {
     "token": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-    "amount": "250000000000"
+    "amount": "0x3A35294400"
   }
 }

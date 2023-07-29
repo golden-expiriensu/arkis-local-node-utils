@@ -19,6 +19,7 @@ export async function registerMarginAccount(factory: Contract): Promise<string> 
   }, constants.Zero)
 
   await factory.registerMarginAccount(
+    account.owner,
     res.collateral,
     res.leverage,
     res.riskFactor,

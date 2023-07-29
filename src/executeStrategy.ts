@@ -2,7 +2,7 @@ import { closeMarginAccount } from './close'
 import { openMarginAccount } from './open'
 import { registerMarginAccount } from './register'
 import strategy from './strategy.json'
-import { getFactoryAsOwner } from './utils'
+import { getFactoryAsOwner } from './provider'
 
 async function main() {
   const factory = await getFactoryAsOwner()
