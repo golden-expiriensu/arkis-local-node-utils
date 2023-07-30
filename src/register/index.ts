@@ -1,7 +1,7 @@
 import { formatUnits } from 'ethers/lib/utils'
 import { calculateRiskFactor } from './marginEngine'
 import account from '../account.json'
-import { Contract, Signer, constants } from 'ethers'
+import { BigNumber, Contract, ContractTransaction, Signer, constants } from 'ethers'
 import { fetchAccountBorrowed } from '../events/fetchAccountBorrowed'
 import { getAddress, setBalance, setTokenBalance } from '../utils'
 import ERC20 from '../artifacts/IERC20.json'
@@ -42,7 +42,7 @@ export async function registerMarginAccount(factory: Contract): Promise<string> 
     }
   }
 
-  await factory.registerMarginAccount(
+  const tx: ContractTransaction = await factory.registerMarginAccount(
     account.owner,
     res.collateral,
     res.leverage,
@@ -52,8 +52,10 @@ export async function registerMarginAccount(factory: Contract): Promise<string> 
     res.signature,
     { value },
   )
+  const receipt = await tx.wait()
+  const blockNumber = BigNumber.from(receipt.blockNumber).toHexString()
 
-  const events = await fetchAccountBorrowed('latest')
+  const events = await fetchAccountBorrowed(blockNumber)
   const addressBytes32 = events[0].topics[1]
 
   if (!addressBytes32) throw new Error('Failed to register margin account')
