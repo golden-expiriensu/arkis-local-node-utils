@@ -1,13 +1,69 @@
-import { formatUnits } from 'ethers/lib/utils'
+import { formatUnits, parseEther } from 'ethers/lib/utils'
 import { calculateRiskFactor } from './marginEngine'
 import account from '../account.json'
-import { BigNumber, Contract, ContractTransaction, Signer, constants } from 'ethers'
+import { BigNumber, Contract, ContractTransaction, Signer, Wallet, constants } from 'ethers'
 import { fetchAccountBorrowed } from '../events/fetchAccountBorrowed'
 import { getAddress, setBalance, setTokenBalance } from '../utils'
 import ERC20 from '../artifacts/IERC20.json'
 
 function isETH(token: string): boolean {
   return token.toLowerCase() === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'.toLowerCase()
+}
+
+export async function registerMarginAccount(factory: Contract): Promise<string> {
+  const trader = new Wallet(account.traderPrivateKey, factory.provider)
+  await setBalance(trader.address, parseEther('10').toHexString())
+
+  const metadata = await calculateRiskFactor(account.collateral, account.leverage)
+  const ethValue = await setBalancesAndApprove(trader, account.collateral, factory)
+
+  const tx: ContractTransaction = await factory
+    .connect(trader)
+    .registerMarginAccount(
+      metadata.collateral,
+      metadata.leverage,
+      metadata.riskFactor,
+      metadata.timestamp,
+      metadata.nonce,
+      metadata.signature,
+      { value: ethValue },
+    )
+
+  const receipt = await tx.wait()
+  const blockNumber = BigNumber.from(receipt.blockNumber).toHexString()
+
+  const events = await fetchAccountBorrowed(blockNumber)
+  const addressBytes32 = events[0].topics[1]
+
+  if (!addressBytes32) throw new Error('Failed to register margin account')
+  console.log(`New margin account ${getAddress(addressBytes32)} registered in block ${blockNumber}`)
+
+  return addressBytes32
+}
+
+async function setBalancesAndApprove(
+  account: Wallet,
+  assets: Array<{ token: string; amount: string }>,
+  factory: Contract,
+): Promise<BigNumber> {
+  const ethValue = assets.reduce((prev, curr) => {
+    return isETH(curr.token) ? prev.add(curr.amount) : prev
+  }, constants.Zero)
+
+  for (const asset of assets) {
+    if (isETH(asset.token)) {
+      await increaseEthBalance(account, asset.amount)
+    } else {
+      await setTokenBalanceAndApprove(asset.token, account, factory.address, asset.amount)
+    }
+  }
+
+  return ethValue
+}
+
+async function increaseEthBalance(account: Signer, delta: string): Promise<void> {
+  const newBalance = BigNumber.from(delta).add(await account.getBalance())
+  await setBalance(await account.getAddress(), newBalance.toHexString())
 }
 
 async function setTokenBalanceAndApprove(
@@ -23,43 +79,4 @@ async function setTokenBalanceAndApprove(
   if ((await token.allowance(await account.getAddress(), to)) < amount) {
     await token.approve(to, constants.MaxUint256)
   }
-}
-
-export async function registerMarginAccount(factory: Contract): Promise<string> {
-  const res = await calculateRiskFactor(account.collateral, account.leverage)
-
-  if (Number(formatUnits(res.riskFactor, 32)) < 1.0) throw new Error('Risk factor too low')
-
-  const value = account.collateral.reduce((prev, curr) => {
-    return isETH(curr.token) ? prev.add(curr.amount) : prev
-  }, constants.Zero)
-
-  for (const collateral of account.collateral) {
-    if (isETH(collateral.token)) {
-      await setBalance(await factory.signer.getAddress(), constants.MaxUint256.toHexString())
-    } else {
-      await setTokenBalanceAndApprove(collateral.token, factory.signer, factory.address, collateral.amount)
-    }
-  }
-
-  const tx: ContractTransaction = await factory.registerMarginAccount(
-    account.owner,
-    res.collateral,
-    res.leverage,
-    res.riskFactor,
-    res.timestamp,
-    res.nonce,
-    res.signature,
-    { value },
-  )
-  const receipt = await tx.wait()
-  const blockNumber = BigNumber.from(receipt.blockNumber).toHexString()
-
-  const events = await fetchAccountBorrowed(blockNumber)
-  const addressBytes32 = events[0].topics[1]
-
-  if (!addressBytes32) throw new Error('Failed to register margin account')
-  console.log(`New margin account registered ${getAddress(addressBytes32)}`)
-
-  return addressBytes32
 }

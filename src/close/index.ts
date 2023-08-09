@@ -23,8 +23,9 @@ export async function closeMarginAccount(
             {
               protocol: 'transfer',
               request: {
-                path: `${account.leverage.token}00000000000000000000000000000000000000000000000F`,
+                path: `${account.leverage.token}000000000000000000000000000000000000000000000000`,
                 amountIn: onlySuspend ? constants.MaxUint256 : 1,
+                extraData: '0x',
                 minAmountOut: 0,
                 recipient: await getFactoryAddress(),
               },
@@ -39,6 +40,8 @@ export async function closeMarginAccount(
 
   await factory.tryCloseMarginAccount(getAddress(marginAccountBytes32), liquidationPlan)
 
-  console.log(`${onlySuspend ? 'Suspended' : 'Closed'} margin account ${getAddress(marginAccountBytes32)}`)
+  console.log(
+    `Margin account ${getAddress(marginAccountBytes32)} was ${onlySuspend ? 'suspended' : 'successfully liquidated'}`,
+  )
   return marginAccountBytes32
 }

@@ -47,6 +47,6 @@ export async function openMarginAccount(factory: Contract, marginAccountBytes32:
     },
   ])
 
-  console.log(`Opened margin account ${getAddress(marginAccountBytes32)}`)
+  console.log(`Margin account ${getAddress(marginAccountBytes32)} was supplied with leverage and is now open`)
   return marginAccountBytes32
 }
