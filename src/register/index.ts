@@ -1,4 +1,4 @@
-import { formatUnits, parseEther } from 'ethers/lib/utils'
+import { parseEther } from 'ethers/lib/utils'
 import { calculateRiskFactor } from './marginEngine'
 import account from '../account.json'
 import { BigNumber, Contract, ContractTransaction, Signer, Wallet, constants } from 'ethers'

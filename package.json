@@ -1,7 +1,8 @@
 {
   "name": "playground",
   "scripts": {
-    "strategy": "pnpm ts-node src/executeStrategy.ts"
+    "strategy": "pnpm ts-node src/executeStrategy.ts",
+    "deposit3pool": "pnpm ts-node src/execute/deposit3pool.ts"
   },
   "devDependencies": {
     "@types/node": "^20.4.0",
