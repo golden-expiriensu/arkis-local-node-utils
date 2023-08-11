@@ -1,9 +1,9 @@
 import { getProvider } from '../provider'
 import ERC20 from '../artifacts/IERC20.json'
 import MarginAccountImplementation from '../artifacts/MarginAccountImplementation.json'
-import { BigNumber, Contract, Wallet } from 'ethers'
+import { BigNumber, Contract, Signer, Wallet } from 'ethers'
 import accountConfig from '../account.json'
-import { Interface, parseEther } from 'ethers/lib/utils'
+import { Interface, formatUnits, parseEther } from 'ethers/lib/utils'
 import { setBalance, setTokenBalance } from '../utils'
 
 export async function addLiquidity3pool(
@@ -26,9 +26,9 @@ export async function addLiquidity3pool(
     },
   ])
 
-  await mintTokenIfNotEnough(account, '0x6B175474E89094C44Da98b954EedeAC495271d0F', amounts.dai)
-  await mintTokenIfNotEnough(account, '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', amounts.usdc)
-  await mintTokenIfNotEnough(account, '0xdAC17F958D2ee523a2206206994597C13D831ec7', amounts.usdt)
+  await transferTokenIfNotEnough(trader, account, '0x6B175474E89094C44Da98b954EedeAC495271d0F', amounts.dai)
+  await transferTokenIfNotEnough(trader, account, '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', amounts.usdc)
+  await transferTokenIfNotEnough(trader, account, '0xdAC17F958D2ee523a2206206994597C13D831ec7', amounts.usdt)
 
   const payload = abi.encodeFunctionData('add_liquidity', [[amounts.dai, amounts.usdc, amounts.usdt], 0])
 
@@ -43,13 +43,30 @@ export async function addLiquidity3pool(
   console.log('successfully added liquidity to 3pool')
 }
 
-async function mintTokenIfNotEnough(account: Contract, tokenAddress: string, amount: string): Promise<void> {
-  const token = new Contract(tokenAddress, ERC20, account.provider)
+async function transferTokenIfNotEnough(
+  from: Wallet,
+  to: Contract,
+  tokenAddress: string,
+  amount: string,
+): Promise<void> {
+  const token = new Contract(tokenAddress, ERC20, to.provider)
 
   const amountbn = BigNumber.from(amount)
+  const balance = await token.balanceOf(from.address)
 
-  if (amountbn.gt(await token.balanceOf(account.address))) {
-    await setTokenBalance(token, account, amountbn.toHexString())
+  if (amountbn.gt(balance)) {
+    const decimals = await token.decimals()
+    const symbol = await token.symbol()
+
+    console.log(
+      `Not enough ${symbol} on account:\n  - have ${formatUnits(balance, decimals)}\n  - need ${formatUnits(
+        amountbn,
+        decimals,
+      )}`,
+    )
+    console.log(`Transferring ${formatUnits(amountbn.sub(balance), decimals)} of ${symbol} to account...`)
+    await setTokenBalance(token, from, amountbn.toHexString())
+    await token.connect(from).transfer(to.address, amountbn.sub(balance))
   }
 }
 
