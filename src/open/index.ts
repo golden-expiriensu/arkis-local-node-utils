@@ -1,52 +1,69 @@
+import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { Contract } from 'ethers'
-import account from '../account.json'
-import { getAddress, setBalance, setTokenBalance } from '../utils'
 import ERC20 from '../artifacts/IERC20.json'
+import { AccountConfig } from '../types'
+import { getAddress, topUpBalance, topUpTokenBalance } from '../utils'
 
-export async function openMarginAccount(factory: Contract, marginAccountBytes32: string): Promise<string> {
-  if (getAddress(account.leverage.token) === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
-    await setBalance(factory.address, account.leverage.amount)
+export async function openMarginAccount(
+  config: AccountConfig,
+  nonce: number,
+  factory: Contract,
+  marginAccountBytes32: string,
+): Promise<string> {
+  let res: TransactionResponse | null
+  if (getAddress(config.leverage.token) === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
+    res = await topUpBalance(factory.address, config.leverage.amount)
   } else {
-    await setTokenBalance(
-      new Contract(account.leverage.token, ERC20, factory.provider),
+    res = await topUpTokenBalance(
+      new Contract(config.leverage.token, ERC20, factory.provider),
       factory.address,
-      account.leverage.amount,
+      config.leverage.amount,
     )
   }
+  if (res) await res.wait()
 
-  await factory.submitPlan([
-    {
-      action: {
-        route: {
-          protocol: '',
-          destination: 'localhost',
-        },
-        content: [
-          {
-            sequence: [0],
-            increasePositionInstructions: [
-              {
-                protocol: 'arkis.marginaccount',
-                request: {
-                  descriptor: {
-                    poolId: 0,
-                    extraData: marginAccountBytes32,
-                  },
-                  input: [account.leverage],
-                  minLiquidityOut: 0,
-                },
-              },
-            ],
-            decreasePositionInstructions: [],
-            exchangeInstructions: [],
-            exchangeAllInstructions: [],
+  const tx = await factory.submitPlan(
+    [
+      {
+        action: {
+          route: {
+            protocol: '',
+            destination: 'localhost',
           },
-        ],
+          content: [
+            {
+              sequence: [0],
+              increasePositionInstructions: [
+                {
+                  protocol: 'arkis.marginaccount',
+                  request: {
+                    descriptor: {
+                      poolId: 0,
+                      extraData: marginAccountBytes32,
+                    },
+                    input: [config.leverage],
+                    minLiquidityOut: 0,
+                  },
+                },
+              ],
+              decreasePositionInstructions: [],
+              exchangeInstructions: [],
+              exchangeAllInstructions: [],
+            },
+          ],
+        },
+        onComplete: [],
       },
-      onComplete: [],
-    },
-  ])
+    ],
+    { nonce },
+  )
 
-  console.log(`Margin account ${getAddress(marginAccountBytes32)} was supplied with leverage and is now open`)
+  const receipt = await tx.wait()
+
+  console.log(
+    `Margin account ${getAddress(marginAccountBytes32)} was supplied with leverage in block ${
+      receipt.blockNumber
+    } and is now open`,
+  )
   return marginAccountBytes32
 }

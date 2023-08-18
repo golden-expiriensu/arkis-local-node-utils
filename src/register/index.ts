@@ -1,21 +1,20 @@
-import { parseEther } from 'ethers/lib/utils'
-import { calculateRiskFactor } from './marginEngine'
-import account from '../account.json'
-import { BigNumber, Contract, ContractTransaction, Signer, Wallet, constants } from 'ethers'
-import { fetchAccountBorrowed } from '../events/fetchAccountBorrowed'
-import { getAddress, setBalance, setTokenBalance } from '../utils'
+import { TransactionResponse } from '@ethersproject/abstract-provider'
+import { BigNumber, Contract, ContractTransaction, Wallet, constants } from 'ethers'
 import ERC20 from '../artifacts/IERC20.json'
+import { fetchAccountBorrowed } from '../events/fetchAccountBorrowed'
+import { AccountConfig } from '../types'
+import { getAddress, topUpBalance, topUpTokenBalance } from '../utils'
+import { calculateRiskFactor } from './marginEngine'
 
 function isETH(token: string): boolean {
   return token.toLowerCase() === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'.toLowerCase()
 }
 
-export async function registerMarginAccount(factory: Contract): Promise<string> {
-  const trader = new Wallet(account.traderPrivateKey, factory.provider)
-  await setBalance(trader.address, parseEther('10').toHexString())
+export async function registerMarginAccount(config: AccountConfig, factory: Contract): Promise<string> {
+  const trader = new Wallet(config.ownerPrivateKey, factory.provider)
 
-  const metadata = await calculateRiskFactor(account.collateral, account.leverage)
-  const ethValue = await setBalancesAndApprove(trader, account.collateral, factory)
+  const metadata = await calculateRiskFactor(config.collateral, config.leverage)
+  const ethValue = await setBalancesAndApprove(trader, config.collateral, factory)
 
   const tx: ContractTransaction = await factory
     .connect(trader)
@@ -32,7 +31,7 @@ export async function registerMarginAccount(factory: Contract): Promise<string> 
   const receipt = await tx.wait()
   const blockNumber = BigNumber.from(receipt.blockNumber).toHexString()
 
-  const events = await fetchAccountBorrowed(blockNumber)
+  const events = await fetchAccountBorrowed(blockNumber, trader.address)
   const addressBytes32 = events[0].topics[1]
 
   if (!addressBytes32) throw new Error('Failed to register margin account')
@@ -50,33 +49,37 @@ async function setBalancesAndApprove(
     return isETH(curr.token) ? prev.add(curr.amount) : prev
   }, constants.Zero)
 
+  const promises = new Array<Promise<TransactionResponse | null>>()
+
   for (const asset of assets) {
     if (isETH(asset.token)) {
-      await increaseEthBalance(account, asset.amount)
+      promises.push(topUpBalance(account.address, asset.amount))
     } else {
-      await setTokenBalanceAndApprove(asset.token, account, factory.address, asset.amount)
+      promises.push(topUpTokenBalanceAndApprove(asset.token, account, asset.amount, factory.address))
     }
   }
+  if (ethValue.eq(0)) promises.push(topUpBalance(account.address, '0'))
+
+  const txs = await Promise.all(promises)
+  await Promise.all(txs.map((tx) => tx?.wait()))
 
   return ethValue
 }
 
-async function increaseEthBalance(account: Signer, delta: string): Promise<void> {
-  const newBalance = BigNumber.from(delta).add(await account.getBalance())
-  await setBalance(await account.getAddress(), newBalance.toHexString())
-}
-
-async function setTokenBalanceAndApprove(
+async function topUpTokenBalanceAndApprove(
   tokenAddress: string,
-  account: Signer,
-  to: string,
+  account: Wallet,
   amount: string,
-): Promise<void> {
+  approvee: string,
+): Promise<ContractTransaction | null> {
   const token = new Contract(tokenAddress, ERC20, account)
 
-  await setTokenBalance(token, await account.getAddress(), amount)
+  const tx = await topUpTokenBalance(token, account.address, amount)
 
-  if ((await token.allowance(await account.getAddress(), to)) < amount) {
-    await token.approve(to, constants.MaxUint256)
+  const allowance: BigNumber = await token.allowance(account.address, approvee)
+  if (allowance.lt(amount)) {
+    return await token.connect(account).approve(approvee, constants.MaxUint256)
   }
+
+  return tx
 }

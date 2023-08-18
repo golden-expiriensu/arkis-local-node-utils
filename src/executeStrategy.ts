@@ -2,38 +2,51 @@ import { closeMarginAccount } from './close'
 import { openMarginAccount } from './open'
 import { registerMarginAccount } from './register'
 import strategy from './strategy.json'
-import { getFactoryAsOwner } from './provider'
+import { getFactoryAsOwner, getOwner } from './provider'
+import { AccountConfig } from './types'
+import { BigNumber } from 'ethers'
 
 async function main() {
+  const usedPrivateKeys = new Set<string>()
+  for (const elem of [...strategy.register, ...strategy.open, ...strategy.close]) {
+    if (usedPrivateKeys.has(elem.ownerPrivateKey)) throw new Error(`Duplicated private key: ${elem.ownerPrivateKey}`)
+    for (const asset of [...elem.collateral, elem.leverage]) {
+      asset.amount = BigNumber.from(asset.amount).toHexString()
+    }
+  }
+
   const factory = await getFactoryAsOwner()
 
-  while (strategy.registered-- > 0) {
-    await registerMarginAccount(factory)
-    console.log('Register strategy done')
+  for (const register of strategy.register) {
+    registerMarginAccount(register, factory)
   }
 
-  while (strategy.opened-- > 0) {
-    const registered = await registerMarginAccount(factory)
-    await openMarginAccount(factory, registered)
-    console.log('Open strategy done')
+  const md = {
+    nonce: await getOwner().getTransactionCount(),
   }
 
-  while (strategy.suspended-- > 0) {
-    console.log('Suspended strategy is temporarily unavailable')
-    break
-    const registered = await registerMarginAccount(factory)
-    const opened = await openMarginAccount(factory, registered)
-    await closeMarginAccount(factory, opened, true)
-    console.log('Suspend strategy done')
+  for (const open of strategy.open) {
+    registerMarginAccount(open, factory).then((registered) => openMarginAccount(open, md.nonce++, factory, registered))
   }
 
-  const toClose = new Array<string>()
-  while (strategy.closed-- > 0) {
-    const registered = await registerMarginAccount(factory)
-    toClose.push(await openMarginAccount(factory, registered))
+  const promisesOfRegistration = new Array<Promise<{ config: AccountConfig; account: string }>>()
+  for (const close of strategy.close) {
+    promisesOfRegistration.push(
+      (async () => {
+        const account = await registerMarginAccount(close, factory)
+        return {
+          config: close,
+          account,
+        }
+      })(),
+    )
   }
-  for (const opened of toClose) {
-    await closeMarginAccount(factory, opened)
+  const registeredAccs = await Promise.all(promisesOfRegistration)
+
+  for (const registered of registeredAccs) {
+    openMarginAccount(registered.config, md.nonce++, factory, registered.account).then((opened) =>
+      closeMarginAccount(registered.config, md.nonce++, factory, opened),
+    )
     console.log('Close strategy done')
   }
 }
