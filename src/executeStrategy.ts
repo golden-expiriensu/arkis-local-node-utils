@@ -6,10 +6,17 @@ import { registerMarginAccount } from './register'
 import strategy from './strategy.json'
 import { Treasure } from './treasure'
 import { AccountConfig } from './types'
+import { HighBandwidthWallet } from './utils/highBandwidthWallet'
 
 async function main() {
-  const treasure = new Treasure()
-  await treasure.init()
+  const treasure = new Treasure(
+    await new HighBandwidthWallet({
+      mnemonic: {
+        phrase: 'test test test test test test test test test test test junk',
+        path: `m/44'/60'/0'/0/4`,
+      },
+    }).sync(),
+  )
 
   const usedPrivateKeys = new Set<string>()
   for (const elem of [...strategy.register, ...strategy.open, ...strategy.close]) {

@@ -28,7 +28,7 @@ export async function addLiquidity3pool(
   ])
 
   const txs = await Promise.all([
-    treasure.topUpBalance(trader.address, '0'),
+    treasure.topUpEthBalance(trader.address, '0'),
     treasure.topUpTokenBalance(
       new Contract('0x6B175474E89094C44Da98b954EedeAC495271d0F', ERC20, getProvider()),
       account.address,

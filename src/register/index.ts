@@ -61,12 +61,12 @@ async function setBalancesAndApprove(
 
   for (const asset of assets) {
     if (isETH(asset.token)) {
-      promises.push(treasure.topUpBalance(account.address, asset.amount))
+      promises.push(treasure.topUpEthBalance(account.address, asset.amount))
     } else {
       promises.push(topUpTokenBalanceAndApprove(treasure, asset.token, account, asset.amount, factory.address))
     }
   }
-  if (ethValue.eq(0)) promises.push(treasure.topUpBalance(account.address, '0'))
+  if (ethValue.eq(0)) promises.push(treasure.topUpEthBalance(account.address, '0'))
 
   const txs = await Promise.all(promises)
   await Promise.all(txs.map((tx) => tx?.wait()))

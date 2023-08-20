@@ -17,7 +17,7 @@ export async function openMarginAccount(
 
   let res: TransactionResponse | null
   if (getAddress(config.leverage.token) === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
-    res = await treasure.topUpBalance(factory.address, config.leverage.amount)
+    res = await treasure.topUpEthBalance(factory.address, config.leverage.amount)
   } else {
     res = await treasure.topUpTokenBalance(
       new Contract(config.leverage.token, ERC20, factory.provider),
