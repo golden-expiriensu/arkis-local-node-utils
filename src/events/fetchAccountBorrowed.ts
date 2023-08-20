@@ -1,29 +1,22 @@
 import axios from 'axios'
 import { hexZeroPad } from 'ethers/lib/utils'
-import { getFactoryAddress, getProviderUrl } from '../provider'
+import { getProviderUrl } from '../provider'
 import { getEventTopic } from './getEventTopic'
 import { getSynchronizationBlock } from './getSynchronizationBlock'
 
-export async function fetchAccountBorrowed(
-  fromBlock?: string,
-  owner?: string,
-): Promise<
-  Array<{
-    data: string
-    topics: Array<string>
-  }>
-> {
-  const topics = [getEventTopic('AccountBorrowed')]
+export async function fetchRegisteredAccount(atBlockNumber?: string, owner?: string): Promise<string> {
+  const topics = [getEventTopic('AccountRegistered')]
   if (owner) topics.push(hexZeroPad(owner, 32))
+
+  console.log(`Fetching events for topics: ${topics.join(', ')} at block number ${atBlockNumber ?? 'latest'}`)
 
   const body = {
     jsonrpc: '2.0',
     method: 'eth_getLogs',
     params: [
       {
-        fromBlock: fromBlock ?? (await getSynchronizationBlock()),
-        toBlock: 'latest',
-        address: await getFactoryAddress(),
+        fromBlock: atBlockNumber ?? (await getSynchronizationBlock()),
+        toBlock: atBlockNumber ?? 'latest',
         topics,
       },
     ],
@@ -32,5 +25,5 @@ export async function fetchAccountBorrowed(
 
   const response = await axios.post(getProviderUrl(), body)
 
-  return response.data.result
+  return response.data.result[0].address
 }

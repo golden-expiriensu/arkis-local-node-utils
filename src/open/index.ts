@@ -1,26 +1,33 @@
 import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { Contract } from 'ethers'
 import ERC20 from '../artifacts/IERC20.json'
+import { Treasure } from '../treasure'
 import { AccountConfig } from '../types'
-import { getAddress, topUpBalance, topUpTokenBalance } from '../utils'
+import { getAddress } from '../utils'
 
 export async function openMarginAccount(
+  treasure: Treasure,
   config: AccountConfig,
   nonce: number,
   factory: Contract,
   marginAccountBytes32: string,
 ): Promise<string> {
+  console.log(`${getAddress(marginAccountBytes32)}---> Submitting allocation plan...`)
+  console.log(`${getAddress(marginAccountBytes32)}---> Owner (${await factory.signer.getAddress()}) nonce is ${nonce}`)
+
   let res: TransactionResponse | null
   if (getAddress(config.leverage.token) === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
-    res = await topUpBalance(factory.address, config.leverage.amount)
+    res = await treasure.topUpBalance(factory.address, config.leverage.amount)
   } else {
-    res = await topUpTokenBalance(
+    res = await treasure.topUpTokenBalance(
       new Contract(config.leverage.token, ERC20, factory.provider),
       factory.address,
       config.leverage.amount,
     )
   }
   if (res) await res.wait()
+
+  console.log(`${getAddress(marginAccountBytes32)}---> Added leverage to factory to supply margin account`)
 
   const tx = await factory.submitPlan(
     [
@@ -61,7 +68,7 @@ export async function openMarginAccount(
   const receipt = await tx.wait()
 
   console.log(
-    `Margin account ${getAddress(marginAccountBytes32)} was supplied with leverage in block ${
+    `${getAddress(marginAccountBytes32)}---> Margin account was supplied with leverage in block ${
       receipt.blockNumber
     } and is now open`,
   )

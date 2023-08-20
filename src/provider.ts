@@ -10,7 +10,9 @@ export async function getFactoryAsOwner(): Promise<Contract> {
 }
 
 export function getOwner(): Wallet {
-  return new Wallet('0x47e179ec197488593b187f80a00eb0da91f1b9d0b13f8733639f19c30a34926a', getProvider())
+  const key = process.env.OWNER_PRIVATE_KEY
+  if (!key) throw new Error('OWNER_PRIVATE_KEY is not set in .env')
+  return new Wallet(key, getProvider())
 }
 
 export async function getFactoryAddress(): Promise<string> {

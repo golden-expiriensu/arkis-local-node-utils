@@ -1,12 +1,16 @@
+import { BigNumber } from 'ethers'
 import { closeMarginAccount } from './close'
 import { openMarginAccount } from './open'
+import { getFactoryAsOwner, getOwner } from './provider'
 import { registerMarginAccount } from './register'
 import strategy from './strategy.json'
-import { getFactoryAsOwner, getOwner } from './provider'
+import { Treasure } from './treasure'
 import { AccountConfig } from './types'
-import { BigNumber } from 'ethers'
 
 async function main() {
+  const treasure = new Treasure()
+  await treasure.init()
+
   const usedPrivateKeys = new Set<string>()
   for (const elem of [...strategy.register, ...strategy.open, ...strategy.close]) {
     if (usedPrivateKeys.has(elem.ownerPrivateKey)) throw new Error(`Duplicated private key: ${elem.ownerPrivateKey}`)
@@ -18,7 +22,7 @@ async function main() {
   const factory = await getFactoryAsOwner()
 
   for (const register of strategy.register) {
-    registerMarginAccount(register, factory)
+    registerMarginAccount(treasure, register, factory)
   }
 
   const md = {
@@ -26,14 +30,16 @@ async function main() {
   }
 
   for (const open of strategy.open) {
-    registerMarginAccount(open, factory).then((registered) => openMarginAccount(open, md.nonce++, factory, registered))
+    registerMarginAccount(treasure, open, factory).then((registered) =>
+      openMarginAccount(treasure, open, md.nonce++, factory, registered),
+    )
   }
 
   const promisesOfRegistration = new Array<Promise<{ config: AccountConfig; account: string }>>()
   for (const close of strategy.close) {
     promisesOfRegistration.push(
       (async () => {
-        const account = await registerMarginAccount(close, factory)
+        const account = await registerMarginAccount(treasure, close, factory)
         return {
           config: close,
           account,
@@ -44,7 +50,7 @@ async function main() {
   const registeredAccs = await Promise.all(promisesOfRegistration)
 
   for (const registered of registeredAccs) {
-    openMarginAccount(registered.config, md.nonce++, factory, registered.account).then((opened) =>
+    openMarginAccount(treasure, registered.config, md.nonce++, factory, registered.account).then((opened) =>
       closeMarginAccount(registered.config, md.nonce++, factory, opened),
     )
     console.log('Close strategy done')
