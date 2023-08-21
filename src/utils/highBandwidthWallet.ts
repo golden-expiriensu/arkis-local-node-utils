@@ -7,7 +7,7 @@ import {
   TypedDataSigner,
 } from '@ethersproject/abstract-signer'
 import { Bytes, Wallet } from 'ethers'
-import { getProvider } from 'src/provider'
+import { getProvider } from './provider'
 
 export class HighBandwidthWallet extends Signer implements ExternallyOwnedAccount, TypedDataSigner {
   private readonly wallet: Wallet

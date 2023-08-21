@@ -1,6 +1,6 @@
 import { BigNumber, Signer, Wallet } from 'ethers'
 import { arrayify, defaultAbiCoder, keccak256, parseUnits } from 'ethers/lib/utils'
-import { getFactoryAddress, getProvider } from '../provider'
+import { getFactoryAddress, getProvider } from 'src/utils'
 
 type Asset = {
   token: string

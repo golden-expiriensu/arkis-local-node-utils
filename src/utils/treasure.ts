@@ -1,18 +1,13 @@
-import { TransactionResponse } from '@ethersproject/abstract-provider'
-import { ExternallyOwnedAccount } from '@ethersproject/abstract-signer'
-import { BigNumber, Contract, ContractTransaction, Signer } from 'ethers'
+import { BigNumber, Contract } from 'ethers'
 
 import { parseEther } from 'ethers/lib/utils'
-import { getProvider } from './provider'
+import { MaybeTx, WalletLike } from 'src/types'
+import { getProvider } from 'src/utils'
 
 export class Treasure {
-  constructor(private wallet: Signer & ExternallyOwnedAccount) {}
+  constructor(private wallet: WalletLike) {}
 
-  async topUpTokenBalance(
-    token: Contract,
-    account: string,
-    upToAmount: string | BigNumber,
-  ): Promise<ContractTransaction | null> {
+  async topUpTokenBalance(token: Contract, account: string, upToAmount: string | BigNumber): Promise<MaybeTx> {
     console.log(`${account}---> Topping up ${token.address} balance up to amount ${upToAmount}`)
 
     const target = BigNumber.from(upToAmount)
@@ -22,11 +17,7 @@ export class Treasure {
     return token.connect(this.wallet).transfer(account, target.sub(currentBalance))
   }
 
-  async topUpEthBalance(
-    account: string,
-    upToAmount: string | BigNumber,
-    includeGas = true,
-  ): Promise<TransactionResponse | null> {
+  async topUpEthBalance(account: string, upToAmount: string | BigNumber, includeGas = true): Promise<MaybeTx> {
     console.log(
       `${account}---> Topping up ETH balance up to amount ${upToAmount}${includeGas ? ' + gas expenses' : ''}`,
     )

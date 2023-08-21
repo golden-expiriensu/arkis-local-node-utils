@@ -2,7 +2,7 @@
   "register": [],
   "open": [
     {
-      "ownerPrivateKey": "0x0000000000000000000000000000000000000000000000000000000000000001",
+      "owner": "Alice",
       "collateral": [
         {
           "token": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
@@ -19,7 +19,7 @@
       }
     },
     {
-      "ownerPrivateKey": "0x0000000000000000000000000000000000000000000000000000000000000002",
+      "owner": "Bob",
       "collateral": [
         {
           "token": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
@@ -32,7 +32,7 @@
       }
     },
     {
-      "ownerPrivateKey": "0x0000000000000000000000000000000000000000000000000000000000000003",
+      "owner": "Clark",
       "collateral": [
         {
           "token": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",

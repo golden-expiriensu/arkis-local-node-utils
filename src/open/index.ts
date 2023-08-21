@@ -1,76 +1,29 @@
-import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { Contract } from 'ethers'
-import ERC20 from '../artifacts/IERC20.json'
-import { Treasure } from '../treasure'
-import { AccountConfig } from '../types'
-import { getAddress } from '../utils'
+import { Logger } from 'src/logger'
+import { Scenario } from 'src/types'
+import { Treasure } from 'src/utils'
+import { createAllocationPlan } from './createAllocationPlan'
+import { mintLeverage } from './topUpFactoryBalance'
 
 export async function openMarginAccount(
   treasure: Treasure,
-  config: AccountConfig,
-  nonce: number,
+  scenario: Scenario,
   factory: Contract,
-  marginAccountBytes32: string,
+  account: string,
 ): Promise<string> {
-  console.log(`${getAddress(marginAccountBytes32)}---> Submitting allocation plan...`)
-  console.log(`${getAddress(marginAccountBytes32)}---> Owner (${await factory.signer.getAddress()}) nonce is ${nonce}`)
+  const logger = new Logger(scenario)
 
-  let res: TransactionResponse | null
-  if (getAddress(config.leverage.token) === '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE') {
-    res = await treasure.topUpEthBalance(factory.address, config.leverage.amount)
-  } else {
-    res = await treasure.topUpTokenBalance(
-      new Contract(config.leverage.token, ERC20, factory.provider),
-      factory.address,
-      config.leverage.amount,
-    )
-  }
+  logger.log('Submitting allocation plan...')
+
+  const res = await mintLeverage({ scenario, treasure, mintTo: factory })
   if (res) await res.wait()
 
-  console.log(`${getAddress(marginAccountBytes32)}---> Added leverage to factory to supply margin account`)
+  logger.log('Added leverage to factory to supply margin account')
 
-  const tx = await factory.submitPlan(
-    [
-      {
-        action: {
-          route: {
-            protocol: '',
-            destination: 'localhost',
-          },
-          content: [
-            {
-              sequence: [0],
-              increasePositionInstructions: [
-                {
-                  protocol: 'arkis.marginaccount',
-                  request: {
-                    descriptor: {
-                      poolId: 0,
-                      extraData: marginAccountBytes32,
-                    },
-                    input: [config.leverage],
-                    minLiquidityOut: 0,
-                  },
-                },
-              ],
-              decreasePositionInstructions: [],
-              exchangeInstructions: [],
-              exchangeAllInstructions: [],
-            },
-          ],
-        },
-        onComplete: [],
-      },
-    ],
-    { nonce },
-  )
-
+  const tx = await factory.submitPlan(createAllocationPlan(account, scenario))
   const receipt = await tx.wait()
 
-  console.log(
-    `${getAddress(marginAccountBytes32)}---> Margin account was supplied with leverage in block ${
-      receipt.blockNumber
-    } and is now open`,
-  )
-  return marginAccountBytes32
+  logger.log(`Margin account was supplied with leverage in block ${receipt.blockNumber} and is now open`)
+
+  return account
 }

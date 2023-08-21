@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { hexZeroPad } from 'ethers/lib/utils'
-import { getProviderUrl } from '../provider'
+import { getProviderUrl } from 'src/utils'
 import { getEventTopic } from './getEventTopic'
 import { getSynchronizationBlock } from './getSynchronizationBlock'
 

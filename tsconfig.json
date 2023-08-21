@@ -10,7 +10,10 @@
     "outDir": "dist",
     "declaration": true,
     "resolveJsonModule": true,
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "src/*": ["src/*"]
+    }
   },
   "include": ["./src"]
 }
