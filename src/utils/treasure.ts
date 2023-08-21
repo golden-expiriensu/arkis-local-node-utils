@@ -18,7 +18,7 @@ export class Treasure {
     return token.connect(this.wallet).transfer(account, target.sub(currentBalance))
   }
 
-  async topUpEthBalance(account: string, upToAmount: string | BigNumber, includeGas = true): Promise<MaybeTx> {
+  async topUpEthBalance(account: string, upToAmount: number | string | BigNumber, includeGas = true): Promise<MaybeTx> {
     console.log(`Topping up ETH balance up to amount ${formatEther(upToAmount)}${includeGas ? ' + gas expenses' : ''}`)
 
     let target = BigNumber.from(upToAmount)

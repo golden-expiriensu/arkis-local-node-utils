@@ -29,7 +29,7 @@ export async function topUpBalancesAndMakeApprovals(
       )
     }
   }
-  if (ethValue.eq(0)) promises.push(treasure.topUpEthBalance(account.address, '0'))
+  if (ethValue.eq(0)) promises.push(treasure.topUpEthBalance(account.address, 0))
 
   const txs = await Promise.all(promises)
   await Promise.all(txs.map((tx) => tx?.wait()))
