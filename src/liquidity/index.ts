@@ -1,3 +1,5 @@
+require('tsconfig-paths/register')
+
 import { createTreasure } from 'src/execute/createTreasure'
 import { addLiquidity3pool } from './addLiquidity3pool'
 

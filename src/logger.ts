@@ -8,6 +8,6 @@ export class Logger {
   }
 
   log(message?: any, ...optionalParams: any[]): void {
-    console.log(`Scenario for ${this.name} --->${message}`, ...optionalParams)
+    console.log(`${this.name} ---> ${message}`, ...optionalParams)
   }
 }

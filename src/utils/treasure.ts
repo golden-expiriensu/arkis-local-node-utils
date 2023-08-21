@@ -8,7 +8,7 @@ export class Treasure {
   constructor(private wallet: WalletLike) {}
 
   async topUpTokenBalance(token: Contract, account: string, upToAmount: string | BigNumber): Promise<MaybeTx> {
-    console.log(`${account}---> Topping up ${token.address} balance up to amount ${upToAmount}`)
+    console.log(`Topping up ${token.address} token balance up to amount ${upToAmount}`)
 
     const target = BigNumber.from(upToAmount)
     const currentBalance = await token.balanceOf(account)
@@ -18,9 +18,7 @@ export class Treasure {
   }
 
   async topUpEthBalance(account: string, upToAmount: string | BigNumber, includeGas = true): Promise<MaybeTx> {
-    console.log(
-      `${account}---> Topping up ETH balance up to amount ${upToAmount}${includeGas ? ' + gas expenses' : ''}`,
-    )
+    console.log(`Topping up ETH balance up to amount ${upToAmount}${includeGas ? ' + gas expenses' : ''}`)
 
     let target = BigNumber.from(upToAmount)
     if (includeGas) target = target.add(parseEther('1'))

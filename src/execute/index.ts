@@ -1,3 +1,5 @@
+require('tsconfig-paths/register')
+
 import { closeMarginAccount } from 'src/close'
 import { openMarginAccount } from 'src/open'
 import { registerMarginAccount } from 'src/register'
@@ -15,10 +17,14 @@ async function main() {
   const factory = (await getFactory()).connect(owner)
 
   for (const register of strategy.register) {
+    console.log('Starting register strategies...\n')
+
     registerMarginAccount(treasure, register, factory)
   }
 
   for (const open of strategy.open) {
+    console.log('Starting open strategies...\n')
+
     registerMarginAccount(treasure, open, factory).then((registered) =>
       openMarginAccount(treasure, open, factory, registered),
     )
@@ -35,6 +41,8 @@ async function main() {
   const registeredAccounts = await Promise.all(promisesOfRegistration)
 
   for (const account of registeredAccounts) {
+    console.log('Starting close strategies...\n')
+
     openMarginAccount(treasure, account.scenario, factory, account.account).then((opened) =>
       closeMarginAccount(account.scenario, factory, opened),
     )

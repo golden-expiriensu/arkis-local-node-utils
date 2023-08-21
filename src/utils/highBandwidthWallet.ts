@@ -10,6 +10,8 @@ import { Bytes, Wallet } from 'ethers'
 import { getProvider } from './provider'
 
 export class HighBandwidthWallet extends Signer implements ExternallyOwnedAccount, TypedDataSigner {
+  readonly provider = getProvider()
+
   private readonly wallet: Wallet
   private nonce?: number
 
@@ -34,7 +36,7 @@ export class HighBandwidthWallet extends Signer implements ExternallyOwnedAccoun
       throw new Error(msg)
     }
 
-    this.wallet.connect(getProvider())
+    this.wallet = this.wallet.connect(getProvider())
   }
 
   async sync(): Promise<HighBandwidthWallet> {

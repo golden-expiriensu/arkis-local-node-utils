@@ -1,5 +1,5 @@
 import { Wallet } from 'ethers'
-import { keccak256 } from 'ethers/lib/utils'
+import { solidityKeccak256 } from 'ethers/lib/utils'
 import { RawScenario, Scenario, Strategy } from 'src/types'
 import { getProvider } from 'src/utils'
 
@@ -16,7 +16,8 @@ export function parseStrategy(strategy: Strategy<RawScenario>): Strategy<Scenari
       if (usedNames.has(name)) throw new Error(`Duplicated owner name: ${name}`)
       usedNames.add(name)
 
-      const wallet = new Wallet(keccak256(name), getProvider())
+      const privateKey = solidityKeccak256(['string'], [name])
+      const wallet = new Wallet(privateKey, getProvider())
 
       parsedStrategy[key].push({
         ...scenario,

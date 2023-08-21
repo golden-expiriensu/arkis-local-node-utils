@@ -1,7 +1,5 @@
 import { HighBandwidthWallet, Treasure } from 'src/utils'
 
-require('tsconfig-paths/register')
-
 export async function createTreasure(): Promise<Treasure> {
   return new Treasure(
     await new HighBandwidthWallet({
