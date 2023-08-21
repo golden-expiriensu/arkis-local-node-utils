@@ -1,8 +1,7 @@
-import { Contract, Wallet } from 'ethers'
+import { Contract } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import _3Pool from 'src/artifacts/3Pool.json'
 import ERC20 from 'src/artifacts/IERC20.json'
-import MarginAccountImplementation from 'src/artifacts/MarginAccountImplementation.json'
 import { MaybeTx, WalletLike } from 'src/types'
 import { Treasure, getProvider } from 'src/utils'
 
@@ -14,13 +13,10 @@ const address3pool = '0xbEbc44782C7dB0a1A60Cb6fe97d0b483032FF1C7'
 
 export async function addLiquidity3pool(
   treasure: Treasure,
-  accountAddress: string,
-  ownerPrivateKey: string,
+  account: Contract,
+  trader: WalletLike,
   amounts: { dai: string; usdc: string; usdt: string },
 ): Promise<void> {
-  const account = new Contract(accountAddress, MarginAccountImplementation.abi, getProvider())
-  const trader = new Wallet(ownerPrivateKey, getProvider())
-
   const abi = new Interface(_3Pool)
 
   const txs = await createTopUpTxs({ treasure, trader, account, amounts })
@@ -36,7 +32,7 @@ export async function addLiquidity3pool(
 
   const receipt = await tx.wait()
 
-  console.log('Successfully added liquidity to 3pool in block number', receipt.blockNumber)
+  console.log('Successfully added liquidity to 3pool in block', receipt.blockNumber)
 }
 
 async function createTopUpTxs(arg: {
