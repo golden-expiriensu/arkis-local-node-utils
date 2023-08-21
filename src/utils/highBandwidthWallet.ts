@@ -13,7 +13,7 @@ export class HighBandwidthWallet extends Signer implements ExternallyOwnedAccoun
   readonly provider = getProvider()
 
   private readonly wallet: Wallet
-  private nonce?: number
+  private nonce?: number | undefined
 
   constructor(source: {
     wallet?: Wallet
@@ -45,7 +45,7 @@ export class HighBandwidthWallet extends Signer implements ExternallyOwnedAccoun
   }
 
   async signTransaction(transaction: TransactionRequest): Promise<string> {
-    if (!this.nonce) throw new Error('Wallet is not synced')
+    if (typeof this.nonce === 'undefined') throw new Error('Wallet is not synced')
 
     transaction.nonce = this.nonce++
     return this.wallet.signTransaction(transaction)
