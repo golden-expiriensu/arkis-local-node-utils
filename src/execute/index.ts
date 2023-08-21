@@ -16,6 +16,8 @@ async function main() {
   const owner = await getOwner()
   const factory = (await getFactory()).connect(owner)
 
+  await treasure.topUpEthBalance(owner.address, 0)
+
   for (const register of strategy.register) {
     console.log('Starting register strategies...\n')
 
