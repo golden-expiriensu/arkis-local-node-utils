@@ -1,5 +1,6 @@
 export * from './address'
 export * from './entities'
+export * from './events'
 export * from './highBandwidthWallet'
 export * from './provider'
 export * from './server'

@@ -1,8 +1,7 @@
 import { BigNumber, Contract, ContractTransaction } from 'ethers'
-import { fetchRegisteredAccount } from 'src/events/fetchRegisteredAccount'
 import { Logger } from 'src/logger'
 import { Scenario } from 'src/types'
-import { Treasure } from 'src/utils'
+import { Treasure, fetchRegisteredAccount } from 'src/utils'
 import { calculateRiskFactor } from './marginEngine'
 import { topUpBalancesAndMakeApprovals } from './utils'
 
