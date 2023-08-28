@@ -11,9 +11,12 @@ export async function getFactory(): Promise<Contract> {
 }
 
 export async function getOwner(): Promise<WalletLike> {
-  const key = process.env.OWNER_PRIVATE_KEY
-  if (!key) throw new Error('OWNER_PRIVATE_KEY is not set in .env')
-  return new HighBandwidthWallet({ privateKey: key }).sync()
+  return new HighBandwidthWallet({
+    mnemonic: {
+      phrase: 'test test test test test test test test test test test junk',
+      path: `m/44'/60'/0'/0/4`,
+    },
+  }).sync()
 }
 
 export async function getFactoryAddress(): Promise<string> {

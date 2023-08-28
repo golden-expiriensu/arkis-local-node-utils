@@ -2,6 +2,36 @@
   "register": [],
   "open": [
     {
+      "owner": "Alice",
+      "collateral": [
+        {
+          "token": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+          "amount": "50000000000000000000000"
+        },
+        {
+          "token": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+          "amount": "20000000"
+        }
+      ],
+      "leverage": {
+        "token": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+        "amount": "45000000000000000000"
+      }
+    },
+    {
+      "owner": "Bob",
+      "collateral": [
+        {
+          "token": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+          "amount": "70000000000"
+        }
+      ],
+      "leverage": {
+        "token": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        "amount": "250000000000"
+      }
+    },
+    {
       "owner": "Clark",
       "collateral": [
         {

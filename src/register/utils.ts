@@ -13,10 +13,12 @@ export async function topUpBalancesAndMakeApprovals(
   const ethValue = findTotalEth(assets)
 
   const promises = new Array<Promise<MaybeTx>>()
+  // We do gas top up first to be able to make the approvals later
+  promises.push(treasure.topUpEthBalance(account.address, 0))
 
   for (const asset of assets) {
     if (isETH(asset.token)) {
-      promises.push(treasure.topUpEthBalance(account.address, asset.amount))
+      promises.push(treasure.topUpEthBalance(account.address, asset.amount, false))
     } else {
       promises.push(
         topUpTokenBalanceAndApprove({
@@ -29,10 +31,9 @@ export async function topUpBalancesAndMakeApprovals(
       )
     }
   }
-  if (ethValue.eq(0)) promises.push(treasure.topUpEthBalance(account.address, 0))
 
   const txs = await Promise.all(promises)
-  await Promise.all(txs.map((tx) => tx?.wait()))
+  await Promise.all(txs.filter((tx) => typeof tx !== 'undefined').map((tx) => tx?.wait()))
 
   return ethValue
 }

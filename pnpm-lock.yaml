@@ -26,7 +26,7 @@ devDependencies:
     specifier: ^20.4.0
     version: 20.4.0
   ethers:
-    specifier: '5'
+    specifier: ^5.7.2
     version: 5.7.2
   prettier:
     specifier: ^3.0.0

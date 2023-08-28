@@ -13,7 +13,7 @@ export class Treasure {
 
     const target = BigNumber.from(upToAmount)
     const currentBalance = await token.balanceOf(account)
-    if (currentBalance.gt(target)) return null
+    if (currentBalance.gt(target)) return undefined
 
     return token.connect(this.wallet).transfer(account, target.sub(currentBalance))
   }
@@ -25,7 +25,7 @@ export class Treasure {
     if (includeGas) target = target.add(parseEther('1'))
 
     const currentBalance = await getProvider().getBalance(account)
-    if (currentBalance.gt(target)) return null
+    if (currentBalance.gt(target)) return undefined
 
     return this.wallet.sendTransaction({
       to: account,

@@ -1,5 +1,5 @@
-import { Wallet } from 'ethers'
 import { Asset } from './asset'
+import { WalletLike } from './wallet'
 
 export type RawScenario = {
   owner: string
@@ -10,7 +10,7 @@ export type RawScenario = {
 export type Scenario = {
   owner: {
     name: string
-    wallet: Wallet
+    wallet: WalletLike
   }
   collateral: Array<Asset>
   leverage: Asset

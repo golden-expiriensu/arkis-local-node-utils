@@ -20,7 +20,7 @@ export async function addLiquidity3pool(
   const abi = new Interface(_3Pool)
 
   const txs = await createTopUpTxs({ treasure, trader, account, amounts })
-  await Promise.all(txs.map((tx) => tx?.wait()))
+  await Promise.all(txs.filter((tx) => typeof tx !== 'undefined').map((tx) => tx?.wait()))
 
   const payload = abi.encodeFunctionData('add_liquidity', [[amounts.dai, amounts.usdc, amounts.usdt], 0])
 
@@ -41,10 +41,12 @@ async function createTopUpTxs(arg: {
   account: Contract
   amounts: { dai: string; usdc: string; usdt: string }
 }): Promise<Array<MaybeTx>> {
-  return Promise.all([
-    arg.treasure.topUpEthBalance(arg.trader.address, 0),
-    arg.treasure.topUpTokenBalance(new Contract(DAI, ERC20, getProvider()), arg.account.address, arg.amounts.dai),
-    arg.treasure.topUpTokenBalance(new Contract(USDC, ERC20, getProvider()), arg.account.address, arg.amounts.usdc),
-    arg.treasure.topUpTokenBalance(new Contract(USDT, ERC20, getProvider()), arg.account.address, arg.amounts.usdt),
-  ])
+  return Promise.all(
+    [
+      arg.treasure.topUpEthBalance(arg.trader.address, 0),
+      arg.treasure.topUpTokenBalance(new Contract(DAI, ERC20, getProvider()), arg.account.address, arg.amounts.dai),
+      arg.treasure.topUpTokenBalance(new Contract(USDC, ERC20, getProvider()), arg.account.address, arg.amounts.usdc),
+      arg.treasure.topUpTokenBalance(new Contract(USDT, ERC20, getProvider()), arg.account.address, arg.amounts.usdt),
+    ].filter((tx) => typeof tx !== 'undefined'),
+  )
 }

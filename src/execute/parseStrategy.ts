@@ -1,9 +1,8 @@
-import { Wallet } from 'ethers'
 import { solidityKeccak256 } from 'ethers/lib/utils'
 import { RawScenario, Scenario, Strategy } from 'src/types'
-import { getProvider } from 'src/utils'
+import { HighBandwidthWallet } from 'src/utils'
 
-export function parseStrategy(strategy: Strategy<RawScenario>): Strategy<Scenario> {
+export async function parseStrategy(strategy: Strategy<RawScenario>): Promise<Strategy<Scenario>> {
   const usedNames = new Set<string>()
   const parsedStrategy: Strategy<Scenario> = { register: [], open: [], suspend: [], close: [] }
 
@@ -17,7 +16,7 @@ export function parseStrategy(strategy: Strategy<RawScenario>): Strategy<Scenari
       usedNames.add(name)
 
       const privateKey = solidityKeccak256(['string'], [name])
-      const wallet = new Wallet(privateKey, getProvider())
+      const wallet = await new HighBandwidthWallet({ privateKey }).sync()
 
       parsedStrategy[key].push({
         ...scenario,
