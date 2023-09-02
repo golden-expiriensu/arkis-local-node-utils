@@ -2,7 +2,8 @@
   "name": "playground",
   "scripts": {
     "strategy": "pnpm ts-node src/execute/index.ts",
-    "deposit3pool": "pnpm ts-node src/liquidity/index.ts"
+    "deposit3pool": "pnpm ts-node src/liquidity/index.ts",
+    "add2lp": "pnpm ts-node src/liquidity/arkisLiquidityPool.ts"
   },
   "devDependencies": {
     "@types/node": "^20.4.0",

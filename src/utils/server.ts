@@ -1,6 +1,6 @@
 import { getProviderUrl } from './provider'
 
-export function getEndpoint(name: 'address/marginAccount' | 'synchronizationBlock'): string {
+export function getEndpoint(name: 'address/marginAccount' | 'address/liquidityPool' | 'synchronizationBlock'): string {
   return `${getServerUrl()}/${name}`
 }
 
