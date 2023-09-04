@@ -19,7 +19,7 @@ async function main() {
 
   const tokenAmount = process.argv[3]
   if (!tokenAmount) throw new Error('Must specify token amount')
-  if (!Number.isInteger(Number(tokenAmount))) throw new Error('Token amount must be an integer')
+  if (!Number.isInteger(tokenAmount)) throw new Error('Token amount must be an integer')
   const decimals = await token.decimals()
   const amount = parseUnits(tokenAmount, decimals)
 
@@ -35,7 +35,7 @@ async function main() {
   const treasure = await createTreasure()
   await treasure.topUpTokenBalance(token, liquidityProvider.address, amount)
 
-  if (amount.gt(await token.balanceOf(liquidityProvider.address))) {
+  if (amount.gt(await token.allowance(liquidityProvider.address))) {
     console.log('Not enought allowance, increasing up to maximum...')
     await token.connect(liquidityProvider).approve(pool.address, constants.MaxUint256)
   }
