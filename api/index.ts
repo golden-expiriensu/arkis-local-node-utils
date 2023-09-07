@@ -34,9 +34,6 @@ app.post('/open/:trader', async (req, res) => {
   const collateral = getAndValidateCollateral(req.body)
   const leverage = getAndValidateLeverage(req.body)
 
-  console.log('Received collateral:', JSON.stringify(collateral))
-  console.log('Received leverage:', JSON.stringify(leverage))
-
   const scenario: Scenario = {
     owner: {
       name: trader,
