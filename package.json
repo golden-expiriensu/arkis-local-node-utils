@@ -7,6 +7,7 @@
     "rem2lp": "pnpm ts-node src/liquidity/arkisLiquidityPoolWithdraw.ts"
   },
   "devDependencies": {
+    "@types/express": "^4.17.17",
     "@types/node": "^20.4.0",
     "ethers": "^5.7.2",
     "prettier": "^3.0.0",
@@ -18,6 +19,7 @@
     "@ethersproject/abstract-signer": "^5.7.0",
     "axios": "^1.4.0",
     "dotenv": "^16.3.1",
+    "express": "^4.18.2",
     "tsconfig-paths": "^4.2.0"
   }
 }

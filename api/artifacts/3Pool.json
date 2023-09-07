@@ -1,0 +1,12 @@
+[
+  {
+    "name": "add_liquidity",
+    "outputs": [],
+    "inputs": [
+      { "type": "uint256[3]", "name": "amounts" },
+      { "type": "uint256", "name": "min_mint_amount" }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

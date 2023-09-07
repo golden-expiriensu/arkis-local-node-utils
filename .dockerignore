@@ -1,0 +1,8 @@
+*
+!api
+
+!.env
+!package.json
+!pnpm-lock.yaml
+!tsconfig.json
+!run_server.sh
