@@ -1,12 +1,11 @@
 require('tsconfig-paths/register')
 
 import axios from 'axios'
-import { Contract, constants } from 'ethers'
+import { Contract } from 'ethers'
 import { formatUnits, isAddress, parseUnits } from 'ethers/lib/utils'
 import IERC20 from 'src/artifacts/IERC20.json'
 import Pool from 'src/artifacts/Pool.json'
 import PoolRegistry from 'src/artifacts/PoolRegistry.json'
-import { createTreasure } from 'src/execute/createTreasure'
 import { getEndpoint, getOwner, getProvider } from 'src/utils'
 
 async function main() {
@@ -32,17 +31,9 @@ async function main() {
 
   const liquidityProvider = await getOwner()
 
-  const treasure = await createTreasure()
-  await treasure.topUpTokenBalance(token, liquidityProvider.address, amount)
+  console.log('Preparation is done, ready to withdraw from liqudity pool')
 
-  if (amount.gt(await token.allowance(liquidityProvider.address))) {
-    console.log('Not enought allowance, increasing up to maximum...')
-    await token.connect(liquidityProvider).approve(pool.address, constants.MaxUint256)
-  }
-
-  console.log('Preparation is done, ready to deposit to liqudity pool')
-
-  await pool.connect(liquidityProvider).deposit(amount, [])
+  await pool.connect(liquidityProvider).withdraw(amount, liquidityProvider.address)
 
   console.log('Success!')
 }
