@@ -2,6 +2,7 @@
   "name": "playground",
   "scripts": {
     "strategy": "pnpm ts-node src/execute/index.ts",
+    "close": "pnpm ts-node src/execute/forceClose.ts",
     "deposit3pool": "pnpm ts-node src/liquidity/index.ts",
     "add2lp": "pnpm ts-node src/liquidity/arkisLiquidityPool.ts",
     "rem2lp": "pnpm ts-node src/liquidity/arkisLiquidityPoolWithdraw.ts"
