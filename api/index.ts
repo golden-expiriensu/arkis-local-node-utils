@@ -48,7 +48,10 @@ app.post('/open/:trader', async (req, res) => {
     await open(treasure, scenario, factory, registered)
     res.send(registered)
   } catch (err) {
-    res.status(400).send(err)
+    if (!(err instanceof Error)) {
+      throw err
+    }
+    res.status(400).send(`an error received: ${(err as any).message}`)
   }
 })
 
