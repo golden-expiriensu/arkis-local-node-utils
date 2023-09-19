@@ -32,7 +32,7 @@ export class ImpersonatedSigner extends Signer implements ExternallyOwnedAccount
     // @ts-ignore
     tx.maxFeePerGas = tx.maxFeePerGas.hex
     // @ts-ignore
-    tx.value = tx.value.hex
+    tx.value = tx.value?.hex ?? '0x00'
     // @ts-ignore
     tx.maxPriorityFeePerGas = tx.maxPriorityFeePerGas.hex
     // @ts-ignore
