@@ -16,5 +16,6 @@
       "api/*": ["api/*"]
     }
   },
-  "include": ["./src", "./api"]
+  "include": ["./src", "./api"],
+  "files": ["./allocation.ts"]
 }
