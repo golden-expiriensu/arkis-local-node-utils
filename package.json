@@ -1,6 +1,7 @@
 {
   "name": "playground",
   "scripts": {
+    "new_strategy": "pnpm ts-node api/index2.ts",
     "strategy": "pnpm ts-node src/execute/index.ts",
     "close": "pnpm ts-node src/execute/forceClose.ts",
     "deposit3pool": "pnpm ts-node src/liquidity/index.ts",
