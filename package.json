@@ -1,31 +1,6 @@
 {
-  "name": "playground",
-  "scripts": {
-    "new_strategy": "pnpm ts-node api/index2.ts",
-    "strategy": "pnpm ts-node src/execute/index.ts",
-    "close": "pnpm ts-node src/execute/forceClose.ts",
-    "deposit3pool": "pnpm ts-node src/liquidity/index.ts",
-    "add2lp": "pnpm ts-node src/liquidity/arkisLiquidityPool.ts",
-    "rem2lp": "pnpm ts-node src/liquidity/arkisLiquidityPoolWithdraw.ts"
-  },
+  "dependencies": { "commander": "^11.1.0" },
   "devDependencies": {
-    "@types/express": "^4.17.17",
-    "@types/node": "^20.4.0",
-    "ethers": "^5.7.2",
-    "prettier": "^3.0.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.1.6"
-  },
-  "dependencies": {
-    "@ethersproject/abstract-provider": "^5.7.0",
-    "@ethersproject/abstract-signer": "^5.7.0",
-    "@types/body-parser": "^1.19.3",
-    "@types/cors": "^2.8.14",
-    "axios": "^1.4.0",
-    "body-parser": "^1.20.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "tsconfig-paths": "^4.2.0"
+    "@types/node": "^20.9.1"
   }
 }
