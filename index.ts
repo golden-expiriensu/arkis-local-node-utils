@@ -1,5 +1,6 @@
 import { Command } from 'commander'
 import { register, open } from './cmd'
+import { parseAsset } from './parser'
 
 const program = new Command()
 program.name('account').description('Arkis internal CLI tools for quality assessment').version('1.0.0')
@@ -11,7 +12,7 @@ program.command('register')
   .requiredOption('-l, --leverage <asset>', 'Leverage for registration')
   .requiredOption('-c, --collateral [assets...]', 'Collateral for registration')
   .action((owner: string, options: any) => {
-    register(owner, options.leverage, options.collateral)
+    register(owner, parseAsset(options.leverage), options.collateral.map(parseAsset))
   })
 
 program.command('open')
