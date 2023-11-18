@@ -54,7 +54,7 @@ export async function register(owner: string, collateral: Asset[], leverage: Ass
   }
 
   const account = getAddress(event.topics[1].slice(26))
-  console.log(`Margin account ${color.bgBlack(color.yellow(account))} registered in transaction ${color.bgBlack(color.green(receipt.hash))}`)
+  console.log(`Margin account ${color.bgBlack(color.green(account))} registered in transaction ${color.bgBlack(color.yellow(receipt.hash))}`)
   return account
 }
 

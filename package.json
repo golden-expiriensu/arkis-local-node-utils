@@ -1,6 +1,7 @@
 {
   "dependencies": { "@colors/colors": "^1.6.0", "commander": "^11.1.0", "ethers": "^6.8.1" },
   "devDependencies": {
-    "@types/node": "^20.9.1"
+    "@types/node": "^20.9.1",
+    "prettier": "^3.1.0"
   }
 }
