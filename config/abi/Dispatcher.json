@@ -1,0 +1,1457 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_interpreter",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_factory",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_allowedSigner",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "_chainName",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "AccessControlBadConfirmation",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "neededRole",
+        "type": "bytes32"
+      }
+    ],
+    "name": "AccessControlUnauthorizedAccount",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      }
+    ],
+    "name": "AmountMustNotBeZero",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ArrayMustNotBeEmpty",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "CrossChainActionIsForbidden",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "actual",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "expected",
+        "type": "address"
+      }
+    ],
+    "name": "InvalidLeverageSupplied",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "NonceAlreadyUsed",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "FixedU256x32",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "RiskFactorIsTooLow",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SignatureExpired",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "SignerIsNotAllowed",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "role",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "previousAdminRole",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "newAdminRole",
+        "type": "bytes32"
+      }
+    ],
+    "name": "RoleAdminChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "role",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      }
+    ],
+    "name": "RoleGranted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "role",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      }
+    ],
+    "name": "RoleRevoked",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "DEFAULT_ADMIN_ROLE",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "MARGIN_ACCOUNT_SUPPLIER",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "MARGIN_ENGINE_AUTHORITY",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "role",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getRoleAdmin",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "role",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "grantRole",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_role",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "_account",
+        "type": "address"
+      }
+    ],
+    "name": "hasRole",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct Asset[]",
+        "name": "_collateral",
+        "type": "tuple[]"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct Asset",
+        "name": "_leverage",
+        "type": "tuple"
+      },
+      {
+        "internalType": "FixedU256x32",
+        "name": "_riskFactor",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_signingTimestamp",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_signingNonce",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_signature",
+        "type": "bytes"
+      }
+    ],
+    "name": "registerMarginAccount",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "role",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "callerConfirmation",
+        "type": "address"
+      }
+    ],
+    "name": "renounceRole",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "role",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "revokeRole",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "components": [
+              {
+                "components": [
+                  {
+                    "internalType": "string",
+                    "name": "protocol",
+                    "type": "string"
+                  },
+                  {
+                    "internalType": "string",
+                    "name": "destination",
+                    "type": "string"
+                  }
+                ],
+                "internalType": "struct Route",
+                "name": "route",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint256[]",
+                    "name": "sequence",
+                    "type": "uint256[]"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "string",
+                        "name": "protocol",
+                        "type": "string"
+                      },
+                      {
+                        "components": [
+                          {
+                            "components": [
+                              {
+                                "internalType": "uint256",
+                                "name": "poolId",
+                                "type": "uint256"
+                              },
+                              {
+                                "internalType": "bytes",
+                                "name": "extraData",
+                                "type": "bytes"
+                              }
+                            ],
+                            "internalType": "struct PositionDescriptor",
+                            "name": "descriptor",
+                            "type": "tuple"
+                          },
+                          {
+                            "components": [
+                              {
+                                "internalType": "address",
+                                "name": "token",
+                                "type": "address"
+                              },
+                              {
+                                "internalType": "uint256",
+                                "name": "amount",
+                                "type": "uint256"
+                              }
+                            ],
+                            "internalType": "struct Asset[]",
+                            "name": "input",
+                            "type": "tuple[]"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "minLiquidityOut",
+                            "type": "uint256"
+                          }
+                        ],
+                        "internalType": "struct IIncreasePositionEvaluator.IncreasePositionRequest",
+                        "name": "request",
+                        "type": "tuple"
+                      }
+                    ],
+                    "internalType": "struct IJitCompiler.IncreasePositionInstruction[]",
+                    "name": "increasePositionInstructions",
+                    "type": "tuple[]"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "string",
+                        "name": "protocol",
+                        "type": "string"
+                      },
+                      {
+                        "components": [
+                          {
+                            "components": [
+                              {
+                                "internalType": "uint256",
+                                "name": "poolId",
+                                "type": "uint256"
+                              },
+                              {
+                                "internalType": "bytes",
+                                "name": "extraData",
+                                "type": "bytes"
+                              }
+                            ],
+                            "internalType": "struct PositionDescriptor",
+                            "name": "descriptor",
+                            "type": "tuple"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "liquidity",
+                            "type": "uint256"
+                          },
+                          {
+                            "components": [
+                              {
+                                "internalType": "address",
+                                "name": "token",
+                                "type": "address"
+                              },
+                              {
+                                "internalType": "uint256",
+                                "name": "amount",
+                                "type": "uint256"
+                              }
+                            ],
+                            "internalType": "struct Asset[]",
+                            "name": "minOutput",
+                            "type": "tuple[]"
+                          }
+                        ],
+                        "internalType": "struct IDecreasePositionEvaluator.DecreasePositionRequest",
+                        "name": "request",
+                        "type": "tuple"
+                      }
+                    ],
+                    "internalType": "struct IJitCompiler.DecreasePositionInstruction[]",
+                    "name": "decreasePositionInstructions",
+                    "type": "tuple[]"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "string",
+                        "name": "protocol",
+                        "type": "string"
+                      },
+                      {
+                        "components": [
+                          {
+                            "internalType": "bytes",
+                            "name": "path",
+                            "type": "bytes"
+                          },
+                          {
+                            "internalType": "bytes",
+                            "name": "extraData",
+                            "type": "bytes"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "amountIn",
+                            "type": "uint256"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "minAmountOut",
+                            "type": "uint256"
+                          },
+                          {
+                            "internalType": "address",
+                            "name": "recipient",
+                            "type": "address"
+                          }
+                        ],
+                        "internalType": "struct IExchangeEvaluator.ExchangeRequest",
+                        "name": "request",
+                        "type": "tuple"
+                      }
+                    ],
+                    "internalType": "struct IJitCompiler.ExchangeInstruction[]",
+                    "name": "exchangeInstructions",
+                    "type": "tuple[]"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "string",
+                        "name": "protocol",
+                        "type": "string"
+                      },
+                      {
+                        "components": [
+                          {
+                            "internalType": "bytes",
+                            "name": "path",
+                            "type": "bytes"
+                          },
+                          {
+                            "internalType": "bytes",
+                            "name": "extraData",
+                            "type": "bytes"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "amountIn",
+                            "type": "uint256"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "minAmountOut",
+                            "type": "uint256"
+                          },
+                          {
+                            "internalType": "address",
+                            "name": "recipient",
+                            "type": "address"
+                          }
+                        ],
+                        "internalType": "struct IExchangeEvaluator.ExchangeRequest",
+                        "name": "request",
+                        "type": "tuple"
+                      }
+                    ],
+                    "internalType": "struct IJitCompiler.ExchangeAllInstruction[]",
+                    "name": "exchangeAllInstructions",
+                    "type": "tuple[]"
+                  }
+                ],
+                "internalType": "struct Script[]",
+                "name": "content",
+                "type": "tuple[]"
+              }
+            ],
+            "internalType": "struct Envelope",
+            "name": "action",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "components": [
+                  {
+                    "internalType": "string",
+                    "name": "protocol",
+                    "type": "string"
+                  },
+                  {
+                    "internalType": "string",
+                    "name": "destination",
+                    "type": "string"
+                  }
+                ],
+                "internalType": "struct Route",
+                "name": "route",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint256[]",
+                    "name": "sequence",
+                    "type": "uint256[]"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "string",
+                        "name": "protocol",
+                        "type": "string"
+                      },
+                      {
+                        "components": [
+                          {
+                            "components": [
+                              {
+                                "internalType": "uint256",
+                                "name": "poolId",
+                                "type": "uint256"
+                              },
+                              {
+                                "internalType": "bytes",
+                                "name": "extraData",
+                                "type": "bytes"
+                              }
+                            ],
+                            "internalType": "struct PositionDescriptor",
+                            "name": "descriptor",
+                            "type": "tuple"
+                          },
+                          {
+                            "components": [
+                              {
+                                "internalType": "address",
+                                "name": "token",
+                                "type": "address"
+                              },
+                              {
+                                "internalType": "uint256",
+                                "name": "amount",
+                                "type": "uint256"
+                              }
+                            ],
+                            "internalType": "struct Asset[]",
+                            "name": "input",
+                            "type": "tuple[]"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "minLiquidityOut",
+                            "type": "uint256"
+                          }
+                        ],
+                        "internalType": "struct IIncreasePositionEvaluator.IncreasePositionRequest",
+                        "name": "request",
+                        "type": "tuple"
+                      }
+                    ],
+                    "internalType": "struct IJitCompiler.IncreasePositionInstruction[]",
+                    "name": "increasePositionInstructions",
+                    "type": "tuple[]"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "string",
+                        "name": "protocol",
+                        "type": "string"
+                      },
+                      {
+                        "components": [
+                          {
+                            "components": [
+                              {
+                                "internalType": "uint256",
+                                "name": "poolId",
+                                "type": "uint256"
+                              },
+                              {
+                                "internalType": "bytes",
+                                "name": "extraData",
+                                "type": "bytes"
+                              }
+                            ],
+                            "internalType": "struct PositionDescriptor",
+                            "name": "descriptor",
+                            "type": "tuple"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "liquidity",
+                            "type": "uint256"
+                          },
+                          {
+                            "components": [
+                              {
+                                "internalType": "address",
+                                "name": "token",
+                                "type": "address"
+                              },
+                              {
+                                "internalType": "uint256",
+                                "name": "amount",
+                                "type": "uint256"
+                              }
+                            ],
+                            "internalType": "struct Asset[]",
+                            "name": "minOutput",
+                            "type": "tuple[]"
+                          }
+                        ],
+                        "internalType": "struct IDecreasePositionEvaluator.DecreasePositionRequest",
+                        "name": "request",
+                        "type": "tuple"
+                      }
+                    ],
+                    "internalType": "struct IJitCompiler.DecreasePositionInstruction[]",
+                    "name": "decreasePositionInstructions",
+                    "type": "tuple[]"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "string",
+                        "name": "protocol",
+                        "type": "string"
+                      },
+                      {
+                        "components": [
+                          {
+                            "internalType": "bytes",
+                            "name": "path",
+                            "type": "bytes"
+                          },
+                          {
+                            "internalType": "bytes",
+                            "name": "extraData",
+                            "type": "bytes"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "amountIn",
+                            "type": "uint256"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "minAmountOut",
+                            "type": "uint256"
+                          },
+                          {
+                            "internalType": "address",
+                            "name": "recipient",
+                            "type": "address"
+                          }
+                        ],
+                        "internalType": "struct IExchangeEvaluator.ExchangeRequest",
+                        "name": "request",
+                        "type": "tuple"
+                      }
+                    ],
+                    "internalType": "struct IJitCompiler.ExchangeInstruction[]",
+                    "name": "exchangeInstructions",
+                    "type": "tuple[]"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "string",
+                        "name": "protocol",
+                        "type": "string"
+                      },
+                      {
+                        "components": [
+                          {
+                            "internalType": "bytes",
+                            "name": "path",
+                            "type": "bytes"
+                          },
+                          {
+                            "internalType": "bytes",
+                            "name": "extraData",
+                            "type": "bytes"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "amountIn",
+                            "type": "uint256"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "minAmountOut",
+                            "type": "uint256"
+                          },
+                          {
+                            "internalType": "address",
+                            "name": "recipient",
+                            "type": "address"
+                          }
+                        ],
+                        "internalType": "struct IExchangeEvaluator.ExchangeRequest",
+                        "name": "request",
+                        "type": "tuple"
+                      }
+                    ],
+                    "internalType": "struct IJitCompiler.ExchangeAllInstruction[]",
+                    "name": "exchangeAllInstructions",
+                    "type": "tuple[]"
+                  }
+                ],
+                "internalType": "struct Script[]",
+                "name": "content",
+                "type": "tuple[]"
+              }
+            ],
+            "internalType": "struct Envelope[]",
+            "name": "onComplete",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct Package[]",
+        "name": "_plan",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "submitPlan",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address payable",
+        "name": "_account",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "token",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct Asset",
+        "name": "partialLeverage",
+        "type": "tuple"
+      }
+    ],
+    "name": "supplyMarginAccount",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes4",
+        "name": "interfaceId",
+        "type": "bytes4"
+      }
+    ],
+    "name": "supportsInterface",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address payable",
+        "name": "_account",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "components": [
+              {
+                "components": [
+                  {
+                    "internalType": "string",
+                    "name": "protocol",
+                    "type": "string"
+                  },
+                  {
+                    "internalType": "string",
+                    "name": "destination",
+                    "type": "string"
+                  }
+                ],
+                "internalType": "struct Route",
+                "name": "route",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint256[]",
+                    "name": "sequence",
+                    "type": "uint256[]"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "string",
+                        "name": "protocol",
+                        "type": "string"
+                      },
+                      {
+                        "components": [
+                          {
+                            "components": [
+                              {
+                                "internalType": "uint256",
+                                "name": "poolId",
+                                "type": "uint256"
+                              },
+                              {
+                                "internalType": "bytes",
+                                "name": "extraData",
+                                "type": "bytes"
+                              }
+                            ],
+                            "internalType": "struct PositionDescriptor",
+                            "name": "descriptor",
+                            "type": "tuple"
+                          },
+                          {
+                            "components": [
+                              {
+                                "internalType": "address",
+                                "name": "token",
+                                "type": "address"
+                              },
+                              {
+                                "internalType": "uint256",
+                                "name": "amount",
+                                "type": "uint256"
+                              }
+                            ],
+                            "internalType": "struct Asset[]",
+                            "name": "input",
+                            "type": "tuple[]"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "minLiquidityOut",
+                            "type": "uint256"
+                          }
+                        ],
+                        "internalType": "struct IIncreasePositionEvaluator.IncreasePositionRequest",
+                        "name": "request",
+                        "type": "tuple"
+                      }
+                    ],
+                    "internalType": "struct IJitCompiler.IncreasePositionInstruction[]",
+                    "name": "increasePositionInstructions",
+                    "type": "tuple[]"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "string",
+                        "name": "protocol",
+                        "type": "string"
+                      },
+                      {
+                        "components": [
+                          {
+                            "components": [
+                              {
+                                "internalType": "uint256",
+                                "name": "poolId",
+                                "type": "uint256"
+                              },
+                              {
+                                "internalType": "bytes",
+                                "name": "extraData",
+                                "type": "bytes"
+                              }
+                            ],
+                            "internalType": "struct PositionDescriptor",
+                            "name": "descriptor",
+                            "type": "tuple"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "liquidity",
+                            "type": "uint256"
+                          },
+                          {
+                            "components": [
+                              {
+                                "internalType": "address",
+                                "name": "token",
+                                "type": "address"
+                              },
+                              {
+                                "internalType": "uint256",
+                                "name": "amount",
+                                "type": "uint256"
+                              }
+                            ],
+                            "internalType": "struct Asset[]",
+                            "name": "minOutput",
+                            "type": "tuple[]"
+                          }
+                        ],
+                        "internalType": "struct IDecreasePositionEvaluator.DecreasePositionRequest",
+                        "name": "request",
+                        "type": "tuple"
+                      }
+                    ],
+                    "internalType": "struct IJitCompiler.DecreasePositionInstruction[]",
+                    "name": "decreasePositionInstructions",
+                    "type": "tuple[]"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "string",
+                        "name": "protocol",
+                        "type": "string"
+                      },
+                      {
+                        "components": [
+                          {
+                            "internalType": "bytes",
+                            "name": "path",
+                            "type": "bytes"
+                          },
+                          {
+                            "internalType": "bytes",
+                            "name": "extraData",
+                            "type": "bytes"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "amountIn",
+                            "type": "uint256"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "minAmountOut",
+                            "type": "uint256"
+                          },
+                          {
+                            "internalType": "address",
+                            "name": "recipient",
+                            "type": "address"
+                          }
+                        ],
+                        "internalType": "struct IExchangeEvaluator.ExchangeRequest",
+                        "name": "request",
+                        "type": "tuple"
+                      }
+                    ],
+                    "internalType": "struct IJitCompiler.ExchangeInstruction[]",
+                    "name": "exchangeInstructions",
+                    "type": "tuple[]"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "string",
+                        "name": "protocol",
+                        "type": "string"
+                      },
+                      {
+                        "components": [
+                          {
+                            "internalType": "bytes",
+                            "name": "path",
+                            "type": "bytes"
+                          },
+                          {
+                            "internalType": "bytes",
+                            "name": "extraData",
+                            "type": "bytes"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "amountIn",
+                            "type": "uint256"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "minAmountOut",
+                            "type": "uint256"
+                          },
+                          {
+                            "internalType": "address",
+                            "name": "recipient",
+                            "type": "address"
+                          }
+                        ],
+                        "internalType": "struct IExchangeEvaluator.ExchangeRequest",
+                        "name": "request",
+                        "type": "tuple"
+                      }
+                    ],
+                    "internalType": "struct IJitCompiler.ExchangeAllInstruction[]",
+                    "name": "exchangeAllInstructions",
+                    "type": "tuple[]"
+                  }
+                ],
+                "internalType": "struct Script[]",
+                "name": "content",
+                "type": "tuple[]"
+              }
+            ],
+            "internalType": "struct Envelope",
+            "name": "action",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "components": [
+                  {
+                    "internalType": "string",
+                    "name": "protocol",
+                    "type": "string"
+                  },
+                  {
+                    "internalType": "string",
+                    "name": "destination",
+                    "type": "string"
+                  }
+                ],
+                "internalType": "struct Route",
+                "name": "route",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint256[]",
+                    "name": "sequence",
+                    "type": "uint256[]"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "string",
+                        "name": "protocol",
+                        "type": "string"
+                      },
+                      {
+                        "components": [
+                          {
+                            "components": [
+                              {
+                                "internalType": "uint256",
+                                "name": "poolId",
+                                "type": "uint256"
+                              },
+                              {
+                                "internalType": "bytes",
+                                "name": "extraData",
+                                "type": "bytes"
+                              }
+                            ],
+                            "internalType": "struct PositionDescriptor",
+                            "name": "descriptor",
+                            "type": "tuple"
+                          },
+                          {
+                            "components": [
+                              {
+                                "internalType": "address",
+                                "name": "token",
+                                "type": "address"
+                              },
+                              {
+                                "internalType": "uint256",
+                                "name": "amount",
+                                "type": "uint256"
+                              }
+                            ],
+                            "internalType": "struct Asset[]",
+                            "name": "input",
+                            "type": "tuple[]"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "minLiquidityOut",
+                            "type": "uint256"
+                          }
+                        ],
+                        "internalType": "struct IIncreasePositionEvaluator.IncreasePositionRequest",
+                        "name": "request",
+                        "type": "tuple"
+                      }
+                    ],
+                    "internalType": "struct IJitCompiler.IncreasePositionInstruction[]",
+                    "name": "increasePositionInstructions",
+                    "type": "tuple[]"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "string",
+                        "name": "protocol",
+                        "type": "string"
+                      },
+                      {
+                        "components": [
+                          {
+                            "components": [
+                              {
+                                "internalType": "uint256",
+                                "name": "poolId",
+                                "type": "uint256"
+                              },
+                              {
+                                "internalType": "bytes",
+                                "name": "extraData",
+                                "type": "bytes"
+                              }
+                            ],
+                            "internalType": "struct PositionDescriptor",
+                            "name": "descriptor",
+                            "type": "tuple"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "liquidity",
+                            "type": "uint256"
+                          },
+                          {
+                            "components": [
+                              {
+                                "internalType": "address",
+                                "name": "token",
+                                "type": "address"
+                              },
+                              {
+                                "internalType": "uint256",
+                                "name": "amount",
+                                "type": "uint256"
+                              }
+                            ],
+                            "internalType": "struct Asset[]",
+                            "name": "minOutput",
+                            "type": "tuple[]"
+                          }
+                        ],
+                        "internalType": "struct IDecreasePositionEvaluator.DecreasePositionRequest",
+                        "name": "request",
+                        "type": "tuple"
+                      }
+                    ],
+                    "internalType": "struct IJitCompiler.DecreasePositionInstruction[]",
+                    "name": "decreasePositionInstructions",
+                    "type": "tuple[]"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "string",
+                        "name": "protocol",
+                        "type": "string"
+                      },
+                      {
+                        "components": [
+                          {
+                            "internalType": "bytes",
+                            "name": "path",
+                            "type": "bytes"
+                          },
+                          {
+                            "internalType": "bytes",
+                            "name": "extraData",
+                            "type": "bytes"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "amountIn",
+                            "type": "uint256"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "minAmountOut",
+                            "type": "uint256"
+                          },
+                          {
+                            "internalType": "address",
+                            "name": "recipient",
+                            "type": "address"
+                          }
+                        ],
+                        "internalType": "struct IExchangeEvaluator.ExchangeRequest",
+                        "name": "request",
+                        "type": "tuple"
+                      }
+                    ],
+                    "internalType": "struct IJitCompiler.ExchangeInstruction[]",
+                    "name": "exchangeInstructions",
+                    "type": "tuple[]"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "string",
+                        "name": "protocol",
+                        "type": "string"
+                      },
+                      {
+                        "components": [
+                          {
+                            "internalType": "bytes",
+                            "name": "path",
+                            "type": "bytes"
+                          },
+                          {
+                            "internalType": "bytes",
+                            "name": "extraData",
+                            "type": "bytes"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "amountIn",
+                            "type": "uint256"
+                          },
+                          {
+                            "internalType": "uint256",
+                            "name": "minAmountOut",
+                            "type": "uint256"
+                          },
+                          {
+                            "internalType": "address",
+                            "name": "recipient",
+                            "type": "address"
+                          }
+                        ],
+                        "internalType": "struct IExchangeEvaluator.ExchangeRequest",
+                        "name": "request",
+                        "type": "tuple"
+                      }
+                    ],
+                    "internalType": "struct IJitCompiler.ExchangeAllInstruction[]",
+                    "name": "exchangeAllInstructions",
+                    "type": "tuple[]"
+                  }
+                ],
+                "internalType": "struct Script[]",
+                "name": "content",
+                "type": "tuple[]"
+              }
+            ],
+            "internalType": "struct Envelope[]",
+            "name": "onComplete",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct Package",
+        "name": "_liquidationPlan",
+        "type": "tuple"
+      }
+    ],
+    "name": "tryCloseMarginAccount",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "success_",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "stateMutability": "payable",
+    "type": "receive"
+  }
+]

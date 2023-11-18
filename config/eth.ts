@@ -1,9 +1,8 @@
-import { JsonRpcProvider } from "ethers";
+import { Contract } from "ethers";
+import { getProvider, getServerUrl } from "./env";
+import { getAbi } from "./abi";
 
-export function getProvider(): JsonRpcProvider {
-  const url = process.env.ETHEREUM_URL
-  if (!url) {
-    throw new Error("can't create RPC provider: ETHEREUM_URL is not set")
-  }
-  return new JsonRpcProvider(url)
+export async function getDispatcher(): Promise<Contract> {
+  const response = await fetch(`${getServerUrl()}/address/marginAccount`)
+  return new Contract(await response.text(), getAbi('dispatcher'), getProvider())
 }
