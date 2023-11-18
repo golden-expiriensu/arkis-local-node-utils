@@ -12,8 +12,12 @@ program.command('register')
   .argument('<owner>', 'Address which will be the owner of the account')
   .requiredOption('-l, --leverage <asset>', 'Leverage for registration')
   .requiredOption('-c, --collateral [assets...]', 'Collateral for registration')
-  .action((owner: string, options: any) => {
-    register(getAddress(owner), options.collateral.map(parseAsset), parseAsset(options.leverage))
+  .option('-o, --open', 'Open the account after registration')
+  .action(async (owner: string, options: any) => {
+    const collateral = options.collateral.map(parseAsset)
+    const leverage = parseAsset(options.leverage)
+    const account = await register(getAddress(owner), collateral, leverage)
+    if (options.open) open(account)
   })
 
 program.command('open')

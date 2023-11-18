@@ -1,7 +1,6 @@
-import { AbstractSigner, JsonRpcProvider, Provider, Signer, TransactionRequest, TransactionResponse, TypedDataDomain, TypedDataField, isAddress } from "ethers"
+import { AbstractSigner, JsonRpcProvider, Provider, Signer, TransactionRequest, TransactionResponse, TypedDataDomain, TypedDataField, isAddress, toBeHex } from "ethers"
 
 export class ImpersonatedSigner extends AbstractSigner {
-  private impersonationPromise: Promise<any>
   private nonce?: number | undefined
 
   constructor(
@@ -10,25 +9,44 @@ export class ImpersonatedSigner extends AbstractSigner {
   ) {
     super()
     if (!isAddress(address)) throw new Error(`ImpersonatedSigner: invalid address: ${address}`)
-    this.impersonationPromise = provider.send('anvil_impersonateAccount', [address])
+  }
+
+  async sync(): Promise<ImpersonatedSigner> {
+    await this.provider.send('anvil_impersonateAccount', [this.address])
+    this.nonce = await this.provider.getTransactionCount(this.address)
+    return this
   }
 
   async sendTransaction(transaction: TransactionRequest): Promise<TransactionResponse> {
     const tx = await this.populateTransaction(transaction)
-    tx.nonce = await this.getNonceAndIncrement()
+    this.incrementNonce(tx)
+
+    // We set all the fields in transaction as hex string because overwise
+    // JsonRpcProvider complains about unexpected types number and bigint.
+    // @ts-ignore
+    tx.type = toBeHex(tx.type ?? 0)
+    tx.chainId = toBeHex(tx.chainId ?? 1)
+    tx.maxFeePerGas = toBeHex(tx.maxFeePerGas ?? 0)
+    tx.maxPriorityFeePerGas = toBeHex(tx.maxPriorityFeePerGas ?? 0)
+    // If gasLimit field present then anvil throws following error:
+    // ... unknown field `gasLimit`, expected one of `to`, `data`, ...
+    tx.gasLimit = undefined
+    tx.value = toBeHex(tx.value ?? 0)
+    // @ts-ignore
+    tx.nonce = toBeHex(tx.nonce ?? 0)
 
     const hash = await this.provider.send('eth_sendTransaction', [tx])
     const maybeTx = await this.provider.getTransaction(hash)
+
     if (!maybeTx) throw new Error('ImpersonatedSigner: transaction not found')
     return maybeTx
   }
 
-  async getNonceAndIncrement(): Promise<number> {
+  incrementNonce(tx: TransactionRequest): void {
     if (typeof this.nonce === 'undefined') {
-      await this.impersonationPromise
-      this.nonce = await this.provider.getTransactionCount(this.address)
+      throw new Error('ImpersonatedSigner: nonce is not synchronized')
     }
-    return this.nonce++
+    tx.nonce = this.nonce++
   }
 
   async getAddress(): Promise<string> {

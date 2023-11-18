@@ -6,15 +6,15 @@ export class ConcurrentWallet extends Wallet {
 
   private nonce?: number | undefined
 
-  async signTransaction(transaction: TransactionRequest): Promise<string> {
-    transaction.nonce = await this.getNonceAndIncrement()
-    return super.signTransaction(transaction)
+  async signTransaction(tx: TransactionRequest): Promise<string> {
+    this.incrementNonce(tx)
+    return super.signTransaction(tx)
   }
 
-  async getNonceAndIncrement(): Promise<number> {
+  incrementNonce(tx: TransactionRequest): void {
     if (typeof this.nonce === 'undefined') {
-      this.nonce = await this.provider.getTransactionCount(this.address)
+      this.nonce = tx.nonce!
     }
-    return this.nonce++
+    tx.nonce = this.nonce++
   }
 }
