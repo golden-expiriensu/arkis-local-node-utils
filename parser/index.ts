@@ -1,5 +1,5 @@
 import { Contract, parseUnits } from "ethers";
-import { TOKENS, getProvider, getTokenABI } from "../config";
+import { TOKENS, getProvider, getAbi } from "../config";
 import { Asset } from "../types";
 
 const regex = /^([1-9]\d*\.?\d*)\s(\w+)$/
@@ -16,7 +16,7 @@ export function parseAsset(str: string): Asset {
     const token = TOKENS[symbol]
     const amount = parseUnits(amountStr, token.decimals)
     return {
-      abi: new Contract(token.address, getTokenABI(), getProvider()),
+      abi: new Contract(token.address, getAbi('erc20'), getProvider()),
       token: token.address,
       amount,
     }
