@@ -3,6 +3,7 @@ import { getDispatcher, getProvider, getTreasure } from "../../config";
 import { Asset } from "../../types";
 import { ImpersonatedSigner, maxApprove, topUpBalance, topUpEthBalance } from "../../wallet";
 import { signRiskFactor } from "./signRiskFactor";
+import color from '@colors/colors'
 
 const REGISTER_TOPIC = '0x25e16b23f4151af78a7aa799ac8ab9be8de857409238a98d68cf98a4f19e020d'
 
@@ -53,7 +54,7 @@ export async function register(owner: string, collateral: Asset[], leverage: Ass
   }
 
   const account = getAddress(event.topics[1].slice(26))
-  console.log(`Margin account ${account} registered in transaction ${receipt.hash}`)
+  console.log(`Margin account ${color.bgBlack(color.yellow(account))} registered in transaction ${color.bgBlack(color.green(receipt.hash))}`)
   return account
 }
 
