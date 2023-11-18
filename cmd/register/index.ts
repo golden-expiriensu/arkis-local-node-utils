@@ -34,7 +34,7 @@ export async function register(owner: string, collateral: Asset[], leverage: Ass
   }
   await Promise.all(promises)
 
-  console.log('All balances and approvals are set, ready to register margin account')
+  console.log('All balances and approvals are set, registering the account...')
   const metadata = await signRiskFactor(collateral, leverage)
   const value = [...collateral, leverage].find(a => isEth(a.token))?.amount ?? 0n
 
