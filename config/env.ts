@@ -1,4 +1,5 @@
 import { JsonRpcProvider, Signer, Wallet } from "ethers";
+import { ConcurrentWallet } from "../wallet";
 
 export function getProvider(): JsonRpcProvider {
   const key = 'ETHEREUM_URL'
@@ -10,6 +11,18 @@ export function getSigner(): Signer {
   const key = 'SIGNER_PRIVATE_KEY'
   const privateKey = process.env[key] ?? throwNotSet('signer', key)
   return new Wallet(privateKey)
+}
+
+export function getOwner(): Signer {
+  const key = 'MARGIN_ENGINE_PRIVATE_KEY'
+  const privateKey = process.env[key] ?? throwNotSet('owner', key)
+  return new ConcurrentWallet(privateKey, getProvider())
+}
+
+export function getTreasure(): Signer {
+  const key = 'TREASURE_PRIVATE_KEY'
+  const privateKey = process.env[key] ?? throwNotSet('treasure', key)
+  return new ConcurrentWallet(privateKey, getProvider())
 }
 
 export function getServerUrl(): string {
