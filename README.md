@@ -34,3 +34,19 @@ bun index.ts r 0x61d74003A35c7F0DE1EfaCbFc4d38f84d357F2E2 -l '5000 USDC' -c '3 W
 ### Increase position in CurveFi
 ```sh
 bun index.ts trade 0x7e7BCCb71105EE2C712792D99BC76BD7c2FC6105 curvefi 3pool --add '5000 USDC' '1000 DAI' --mint
+```
+
+### Decrease position in CurveFi
+```sh
+bun index.ts trade 0x7e7BCCb71105EE2C712792D99BC76BD7c2FC6105 curvefi 3pool --remove 5000 USDC' '1000 DAI'
+```
+
+### Remove specific token amount from the account
+```sh
+bun index.ts delete --token '200 USDC' --from 0x7e7BCCb71105EE2C712792D99BC76BD7c2FC6105
+```
+
+### Clear all tokens from the account
+```sh
+bun index.ts delete --all --from 0x7e7BCCb71105EE2C712792D99BC76BD7c2FC6105
+```
