@@ -6,49 +6,31 @@ Check if bun installed with `bun -v` or install it using the command below
 ```sh
 curl -fsSL https://bun.sh/install | bash
 ```
+Make sure you have `.env` file, if not copy content of `.env.example` and fill in url and keys.
 
 ## Commands
 
 All token amounts in the following commands must be specified without decimals, for example 5 WETH and 1500 USDC, but not 5000000000000000000 WETH and 1500000000 USDC.
 
-### Register an account
-You can specify leverage with `-l` or `--leverage` and collateral with `-c` or `--collateral`
+You can check all available commands by running `bun index.ts -h`. To check details of some specific command add the name of the command, for example `bun index.ts register -h` will show usage of account register subcommand.
+
+### Register a new account
 ```sh
-bun register <owner> -l '<amount token>' -c '<amount_0 token_0 [, amount_1 token_1]'
-```
-Example
-```sh
-bun register 0x61d74003A35c7F0DE1EfaCbFc4d38f84d357F2E2 -l '5000 USDC' -c '3 WETH, 500 DAI'
+bun index.ts r 0x61d74003A35c7F0DE1EfaCbFc4d38f84d357F2E2 -l '5000 USDC' -c '3 WETH' '500 DAI'
 ```
 
-### Open a registered account
+### Open already registered account
 ```sh
-bun open <account>
+bun index.ts o 0x94f4C1743d0a8d4F1b7792DD34Cf5A9F5ea97BCD
 ```
 
-### Register and open an account
+### Register and then open an account
 ```sh
-bun register <args> | bun open
-```
-Example
-```sh
-bun register 0x61d74003A35c7F0DE1EfaCbFc4d38f84d357F2E2 -l '5000 USDC' -c '3 WETH, 500 DAI' | bun open
+bun index.ts r 0x61d74003A35c7F0DE1EfaCbFc4d38f84d357F2E2 -l '5000 USDC' -c '3 WETH' -o
 ```
 
-# TODO
+# Coming soon...
 
-### Open a position in CurveFi
-Example
+### Increase position in CurveFi
 ```sh
-bun trade 0x7e7BCCb71105EE2C712792D99BC76BD7c2FC6105 curvefi 3pool -d '5000 USDC, 1000 DAI' --mint
-```
-
-### Remove specific token amount from the account
-```sh
-bun rob <account> <token> <amount>
-```
-
-### Clear all tokens from the account
-```sh
-bun rob <account> completely
-```
+bun index.ts trade 0x7e7BCCb71105EE2C712792D99BC76BD7c2FC6105 curvefi 3pool --add '5000 USDC' '1000 DAI' --mint
