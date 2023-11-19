@@ -38,7 +38,7 @@ bun index.ts trade 0x7e7BCCb71105EE2C712792D99BC76BD7c2FC6105 curvefi 3pool --ad
 
 ### Decrease position in CurveFi
 ```sh
-bun index.ts trade 0x7e7BCCb71105EE2C712792D99BC76BD7c2FC6105 curvefi 3pool --remove 5000 USDC' '1000 DAI'
+bun index.ts trade 0x7e7BCCb71105EE2C712792D99BC76BD7c2FC6105 curvefi 3pool --remove '5000 USDC' '1000 DAI'
 ```
 
 ### Remove specific token amount from the account
