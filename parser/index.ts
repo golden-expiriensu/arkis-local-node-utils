@@ -1,6 +1,6 @@
-import { Contract, parseUnits } from "ethers";
-import { TOKENS, getProvider, getAbi } from "../config";
-import { Asset } from "../types";
+import { Contract, parseUnits } from 'ethers'
+import { TOKENS, getProvider, getAbi } from '../config'
+import { Asset } from '../types'
 
 const regex = /^([1-9]\d*\.?\d*)\s(\w+)$/
 
@@ -21,5 +21,7 @@ export function parseAsset(str: string): Asset {
       amount,
     }
   }
-  throw new Error(`Unknown token: ${symbol}, beware that search is case sensitive. If ${symbol} is a correct token then you should add it to config`)
+  throw new Error(
+    `Unknown token: ${symbol}, beware that search is case sensitive. If ${symbol} is a correct token then you should add it to config`,
+  )
 }

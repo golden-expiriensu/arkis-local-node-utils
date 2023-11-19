@@ -1,5 +1,5 @@
-import { JsonRpcProvider, Signer, Wallet } from "ethers";
-import { ConcurrentWallet } from "../wallet";
+import { JsonRpcProvider, Signer, Wallet } from 'ethers'
+import { ConcurrentWallet } from '../wallet'
 
 export function getProvider(): JsonRpcProvider {
   const key = 'ETHEREUM_URL'

@@ -1,27 +1,31 @@
-import { Contract } from "ethers";
-import { getAbi, getDispatcher, getOwner, getProvider, getTreasure } from "../../config";
-import { topUpBalance, topUpEthBalance } from "../../wallet";
-import { createAllocationPlan } from "./createAllocationPlan";
+import { Contract, Signer } from 'ethers'
+import { getAbi, getDispatcher, getOwner, getProvider, getTreasure } from '../../config'
+import { topUpBalance, topUpEthBalance } from '../../wallet'
+import { createAllocationPlan } from './createAllocationPlan'
 import color from '@colors/colors'
 
-export async function open(account: string): Promise<void> {
+export async function open(account: string, treasure?: Signer): Promise<void> {
   const owner = getOwner()
-  const treasure = getTreasure()
+  if (!treasure) treasure = getTreasure()
   const dispatcher = (await getDispatcher()).connect(owner) as Contract
   const acc = new Contract(account, getAbi('account'), getProvider())
 
-  const promises = [topUpEthBalance({
-    from: treasure,
-    to: await owner.getAddress(),
-    amount: 0n
-  })]
+  const promises = [
+    topUpEthBalance({
+      from: treasure,
+      to: await owner.getAddress(),
+      amount: 0n,
+    }),
+  ]
   const leverage = await acc.leverage()
-  promises.push(topUpBalance({
-    token: new Contract(leverage.token, getAbi('erc20'), getProvider()),
-    from: treasure,
-    to: await dispatcher.getAddress(),
-    amount: leverage.amount
-  }))
+  promises.push(
+    topUpBalance({
+      token: new Contract(leverage.token, getAbi('erc20'), getProvider()),
+      from: treasure,
+      to: await dispatcher.getAddress(),
+      amount: leverage.amount,
+    }),
+  )
   await Promise.all(promises)
 
   console.log('Submitting the allocation plan...')

@@ -1,6 +1,6 @@
-import { keccak256, parseUnits, AbiCoder, getBytes, randomBytes, toBigInt } from "ethers"
-import { Asset } from "../../types"
-import { getDispatcher, getProvider, getSigner } from "../../config"
+import { keccak256, parseUnits, AbiCoder, getBytes, randomBytes, toBigInt } from 'ethers'
+import { Asset } from '../../types'
+import { getDispatcher, getProvider, getSigner } from '../../config'
 
 export async function signRiskFactor(
   collateral: Array<Asset>,

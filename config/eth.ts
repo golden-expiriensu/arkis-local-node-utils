@@ -1,6 +1,6 @@
-import { Contract } from "ethers";
-import { getProvider, getServerUrl } from "./env";
-import { getAbi } from "./abi";
+import { Contract } from 'ethers'
+import { getProvider, getServerUrl } from './env'
+import { getAbi } from './abi'
 
 export async function getDispatcher(): Promise<Contract> {
   const response = await fetch(`${getServerUrl()}/address/marginAccount`)

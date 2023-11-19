@@ -1,22 +1,22 @@
-import { Contract, MaxUint256, Signer, formatEther, formatUnits, parseEther } from "ethers";
-import { getProvider } from "../config";
+import { Contract, MaxUint256, Signer, formatEther, formatUnits, parseEther } from 'ethers'
+import { getProvider } from '../config'
 
 const gasSpending = parseEther('1')
 
-export async function topUpEthBalance(args: {
-  from: Signer,
-  to: string,
-  amount: bigint
-}): Promise<void> {
+export async function topUpEthBalance(args: { from: Signer; to: string; amount: bigint }): Promise<void> {
   const { from, to, amount } = args
   const current = await getProvider().getBalance(to)
   const target = amount + gasSpending
 
   if (target > current) {
-    console.log(`Topping up ETH balance of ${to} up to amount ${formatEther(args.amount)} + gas spendings (${formatEther(gasSpending)} ETH)`)
+    console.log(
+      `Topping up ETH balance of ${to} up to amount ${formatEther(args.amount)} + gas spendings (${formatEther(
+        gasSpending,
+      )} ETH)`,
+    )
     const tx = await from.sendTransaction({
       to,
-      value: target - current
+      value: target - current,
     })
     await tx.wait()
   } else {
@@ -24,12 +24,7 @@ export async function topUpEthBalance(args: {
   }
 }
 
-export async function topUpBalance(args: {
-  token: Contract,
-  from: Signer,
-  to: string,
-  amount: bigint
-}): Promise<void> {
+export async function topUpBalance(args: { token: Contract; from: Signer; to: string; amount: bigint }): Promise<void> {
   const { token, from, to, amount } = args
   if (await isEth(token)) {
     return topUpEthBalance(args)
@@ -37,7 +32,12 @@ export async function topUpBalance(args: {
   const current = await token.balanceOf(to)
 
   if (amount > current) {
-    console.log(`Topping up ${await token.symbol()} balance of ${to} up to amount ${formatUnits(args.amount, await token.decimals())}`)
+    console.log(
+      `Topping up ${await token.symbol()} balance of ${to} up to amount ${formatUnits(
+        args.amount,
+        await token.decimals(),
+      )}`,
+    )
     const tx = await (token.connect(from) as Contract).transfer(to, amount - current)
     await tx.wait()
   } else {
@@ -45,11 +45,7 @@ export async function topUpBalance(args: {
   }
 }
 
-export async function maxApprove(args: {
-  token: Contract,
-  from: Signer,
-  to: string,
-}): Promise<void> {
+export async function maxApprove(args: { token: Contract; from: Signer; to: string }): Promise<void> {
   const { token, from, to } = args
   const allowance = await token.allowance(await from.getAddress(), to)
 

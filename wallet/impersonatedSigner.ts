@@ -1,4 +1,15 @@
-import { AbstractSigner, JsonRpcProvider, Provider, Signer, TransactionRequest, TransactionResponse, TypedDataDomain, TypedDataField, isAddress, toBeHex } from "ethers"
+import {
+  AbstractSigner,
+  JsonRpcProvider,
+  Provider,
+  Signer,
+  TransactionRequest,
+  TransactionResponse,
+  TypedDataDomain,
+  TypedDataField,
+  isAddress,
+  toBeHex,
+} from 'ethers'
 
 export class ImpersonatedSigner extends AbstractSigner {
   private nonce?: number | undefined
@@ -59,7 +70,11 @@ export class ImpersonatedSigner extends AbstractSigner {
   signMessage(_message: string | Uint8Array): Promise<string> {
     throw new Error('ImpersonatedSigner does not support signing messages')
   }
-  signTypedData(_domain: TypedDataDomain, _types: Record<string, Array<TypedDataField>>, _value: Record<string, any>): Promise<string> {
+  signTypedData(
+    _domain: TypedDataDomain,
+    _types: Record<string, Array<TypedDataField>>,
+    _value: Record<string, any>,
+  ): Promise<string> {
     throw new Error('ImpersonatedSigner does not support signing typed data')
   }
   connect(_provider: Provider | null): Signer {
