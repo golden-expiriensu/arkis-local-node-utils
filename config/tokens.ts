@@ -1,4 +1,14 @@
-export const TOKENS = {
+export function getToken(symbol: string): {
+  address: string
+  decimals: number
+} {
+  if (symbol in TOKENS) {
+    return TOKENS[symbol]
+  }
+  throw new Error(`unsupported token: "${symbol}"`)
+}
+
+const TOKENS = {
   ETH: {
     address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
     decimals: 18,
@@ -53,6 +63,22 @@ export const TOKENS = {
   },
   MATIC: {
     address: '0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0',
+    decimals: 18,
+  },
+  '3Crv': {
+    address: '0x6c3F90f043a72FA612cbac8115EE7e52BDe6E490',
+    decimals: 18,
+  },
+  crv3crypto: {
+    address: '0xc4AD29ba4B3c580e6D59105FFf484999997675Ff',
+    decimals: 18,
+  },
+  crvFRAX: {
+    address: '0x3175Df0976dFA876431C2E9eE6Bc45b65d3473CC',
+    decimals: 18,
+  },
+  steCRV: {
+    address: '0x06325440D014e39736583c165C2963BA99fAf14E',
     decimals: 18,
   },
 } as const
