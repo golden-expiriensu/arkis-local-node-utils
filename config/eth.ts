@@ -3,6 +3,6 @@ import { getProvider, getServerUrl } from './env'
 import { getAbi } from './abi'
 
 export async function getDispatcher(): Promise<Contract> {
-  const response = await fetch(`${getServerUrl()}/address/marginAccount`)
+  const response = await fetch(`${getServerUrl()}/address/marginEngine`)
   return new Contract(await response.text(), getAbi('dispatcher'), getProvider())
 }
