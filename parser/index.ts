@@ -7,7 +7,7 @@ const regex = /^([1-9]\d*\.?\d*)\s(\w+)$/
 export function parseAsset(str: string): Asset {
   const match = regex.exec(str)
   if (!match) {
-    throw new Error(`Invalid format for asset, expected '<amount> <token>', got '${str}'`)
+    throw new Error(`invalid format for asset, expected '<amount> <token>', got '${str}'`)
   }
   const amountStr = match[1]
   const symbol = match[2]
@@ -22,6 +22,6 @@ export function parseAsset(str: string): Asset {
     }
   }
   throw new Error(
-    `Unknown token: ${symbol}, beware that search is case sensitive. If ${symbol} is a correct token then you should add it to config`,
+    `unknown token: "${symbol}", beware that search is case sensitive. If ${symbol} is a correct token then you should add it to config`,
   )
 }

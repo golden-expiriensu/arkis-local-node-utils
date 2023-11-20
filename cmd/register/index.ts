@@ -61,7 +61,7 @@ export async function register(
   const receipt: TransactionReceipt = await tx.wait()
   const event = receipt.logs.find((log) => log.topics[0] === REGISTER_TOPIC)
   if (!event) {
-    throw new Error('Margin account registration failed: event was not emitted')
+    throw new Error('margin account registration failed: event was not emitted')
   }
 
   const account = getAddress(event.topics[1].slice(26))

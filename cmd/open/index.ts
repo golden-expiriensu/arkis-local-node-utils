@@ -38,6 +38,6 @@ export async function open(account: string, treasure?: Signer): Promise<void> {
   if (state[0] === 4n) {
     console.log('State is correct, account was opened successfully')
   } else {
-    throw new Error(`Unexpected account state, expected 4, got ${state[0]}`)
+    throw new Error(`unexpected account state, expected 4, got ${state[0]}`)
   }
 }

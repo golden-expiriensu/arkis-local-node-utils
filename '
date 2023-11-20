@@ -30,13 +30,7 @@ program
   .alias('o')
   .description('Open already registered account by allocating the leverage')
   .argument('<account>', 'Address of registered account to be opened')
-  .action(async (account: string) => {
-    try {
-      await open(getAddress(account))
-    } catch (err) {
-      program.error(`error: ${err.message}`)
-    }
-  })
+  .action((account: string) => open(getAddress(account)))
 
 program
   .command('trade')
@@ -55,7 +49,7 @@ program
       'increasePosition',
     ),
   )
-  .action(async (account: string, protocol: string, pool: string, options: any) => {
+  .action((account: string, protocol: string, pool: string, options: any) => {
     try {
       if (options.increasePosition) {
         let assets = options.increasePosition
@@ -64,7 +58,7 @@ program
           assets = []
         }
 
-        await increasePosition({
+        increasePosition({
           account: getAddress(account),
           protocol,
           pool,
@@ -80,7 +74,7 @@ program
           program.error(`error: invalid percent value "${percent}", expected a number between 0 and 100`)
         }
 
-        await decreasePosition({
+        decreasePosition({
           account: getAddress(account),
           protocol,
           pool,
