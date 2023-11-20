@@ -6,7 +6,7 @@ Check if bun installed with `bun -v` or install it using the command below
 ```sh
 curl -fsSL https://bun.sh/install | bash
 ```
-Make sure you have `.env` file, if not copy content of `.env.example` and fill in url and keys.
+Make sure you have `.env` file, if not copy content of `.env.example` and fill in url and keys. If you have already an env file make sure it is up to date with an example one.
 
 ## Commands
 
