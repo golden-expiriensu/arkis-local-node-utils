@@ -1,13 +1,43 @@
 import { Contract, Interface, parseUnits } from 'ethers'
-import { getAbi, getProvider, getToken } from '../../config'
+import { getAbi, getProvider, getToken, isEth } from '../../config'
 import { Asset, Command } from '../../types'
 
 export async function increasePosition(args: { account: string; pool: string; assets: Asset[] }): Promise<Command> {
-  const { account, assets } = args
-  if (assets.length === 0) {
-    throw new Error('increase position on all balance is not supported yet')
-  }
+  let { account, assets } = args
   const pool = getPool(args.pool)
+  if (assets.length === 0) {
+    assets = await Promise.all(
+      pool.tokens.map(async (token) => {
+        const abi = new Contract(token.address, getAbi('erc20'), getProvider())
+        const symbol = isEth(token) ? 'ETH' : ((await abi.symbol()) as string)
+        const amount = isEth(token) ? await getProvider().getBalance(account) : <bigint>await abi.balanceOf(account)
+        return {
+          abi,
+          amount,
+          token: token.address,
+          symbol,
+          decimals: token.decimals,
+        }
+      }),
+    )
+    if (assets.every((a) => a.amount === 0n)) {
+      throw new Error(
+        "can't increase position on all balances since account doesn't have any tokens suitable to deposit into the pool",
+      )
+    }
+  } else {
+    assets = pool.tokens.map((t) => {
+      const amount = assets.find((a) => a.token === t.address)?.amount ?? 0n
+      return {
+        abi: {} as Contract,
+        token: t.address,
+        amount,
+        symbol: '',
+        decimals: t.decimals,
+      }
+    })
+  }
+
   for (const asset of assets) {
     if (!pool.tokens.some((t) => t.address === asset.token)) {
       throw new Error(`token "${asset.symbol}" is not found in "${args.pool}" pool`)
@@ -19,9 +49,7 @@ export async function increasePosition(args: { account: string; pool: string; as
     target: pool.address,
     value: 0n,
     payload: abi.encodeFunctionData(`add_liquidity(uint256[${pool.tokens.length}],uint256)`, [
-      pool.tokens.map((t) =>
-        parseUnits(assets.find((a) => a.token === t.address)?.amount.toString() ?? '0', t.decimals),
-      ),
+      assets.map((a) => a.amount),
       0,
     ]),
   }
@@ -33,6 +61,10 @@ export async function decreasePosition(args: { account: string; pool: string; pe
   const pool = getPool(args.pool)
   const abi = new Interface(getAbi('curvefi_pool'))
   const lpt = new Contract(getToken(pool.lpt).address, getAbi('erc20'), getProvider())
+
+  if ((await lpt.balanceOf(account)) === 0n) {
+    throw new Error(`account "${account}" doesn't have any liquidity in "${args.pool}" pool`)
+  }
 
   return {
     target: pool.address,
@@ -52,7 +84,6 @@ function getPool(name: string): {
     decimals: number
   }[]
 } {
-  console.log(`get pool ${name}`)
   if (name in POOLS) {
     return POOLS[name]
   } else {

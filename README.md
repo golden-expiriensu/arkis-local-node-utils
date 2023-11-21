@@ -29,17 +29,32 @@ bun index.ts o 0x94f4C1743d0a8d4F1b7792DD34Cf5A9F5ea97BCD
 bun index.ts r 0x61d74003A35c7F0DE1EfaCbFc4d38f84d357F2E2 -l '5000 USDC' -c '3 WETH' -o
 ```
 
-# Coming soon...
-
 ### Increase position in CurveFi
+Using specific tokens with specific amounts:
 ```sh
-bun index.ts trade 0x7e7BCCb71105EE2C712792D99BC76BD7c2FC6105 curvefi 3pool --add '5000 USDC' '1000 DAI' --mint
+bun index.ts t 0x7e7BCCb71105EE2C712792D99BC76BD7c2FC6105 curvefi 3pool -ip '5000 USDC' '1000 DAI'
 ```
+or using all available tokens to deposit:
+```sh
+bun index.ts t 0x7e7BCCb71105EE2C712792D99BC76BD7c2FC6105 curvefi 3pool -ip
+```
+Pools available for trading:
+ - 3pool
+ - tricrypto
+ - frax_usdc
+ - steth
 
 ### Decrease position in CurveFi
+Decrease position by 75%
 ```sh
-bun index.ts trade 0x7e7BCCb71105EE2C712792D99BC76BD7c2FC6105 curvefi 3pool --remove '5000 USDC' '1000 DAI'
+bun index.ts trade 0x7e7BCCb71105EE2C712792D99BC76BD7c2FC6105 curvefi tricrypto -dp 75
 ```
+or make a withdraw on whole position:
+```sh
+bun index.ts trade 0x7e7BCCb71105EE2C712792D99BC76BD7c2FC6105 curvefi tricrypto -dp
+```
+
+# Coming soon...
 
 ### Remove specific token amount from the account
 ```sh

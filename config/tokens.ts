@@ -8,6 +8,10 @@ export function getToken(symbol: string): {
   throw new Error(`unsupported token: "${symbol}"`)
 }
 
+export function isEth(token: { address: string }): boolean {
+  return token.address === TOKENS['ETH'].address
+}
+
 const TOKENS = {
   ETH: {
     address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',

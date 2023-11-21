@@ -76,15 +76,18 @@ program
         if (typeof percent === 'boolean') {
           percent = 100
         }
-        if (isNaN(parseInt(percent)) || percent < 0 || percent > 100) {
-          program.error(`error: invalid percent value "${percent}", expected a number between 0 and 100`)
+        if (isNaN(parseInt(percent))) {
+          program.error(`error: invalid percent value "${percent}", expected an integer`)
+        }
+        if (percent < 0 || percent > 100) {
+          program.error(`error: invalid percent value "${percent}", expected an integer between 0 and 100`)
         }
 
         await decreasePosition({
           account: getAddress(account),
           protocol,
           pool,
-          percent,
+          percent: parseInt(percent),
         })
       } else {
         program.error("error: required option '--increase-position' OR '--decrease-position' not specified")
