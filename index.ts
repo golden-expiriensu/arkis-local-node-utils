@@ -43,8 +43,8 @@ program
   .alias('t')
   .description('Perform a trade operation on the margin account')
   .argument('<account>', 'Address of the margin account')
-  .argument('<protocol>', 'Protocol in which trade will be performed')
-  .argument('<pool>', 'Liquidity pool in which trade will be performed')
+  .argument('<protocol>', 'Protocol in which trade will be performed, available protocols: "curvefi"')
+  .argument('<pool>', 'Liquidity pool in which trade will be performed, available pools: "3pool", "tricrypto", "steth", "frax_usdc"')
   .addOption(
     new Option('-ip, --increase-position [assets...]', 'Assets to deposit into the liquidity pool').conflicts(
       'decreasePosition',
