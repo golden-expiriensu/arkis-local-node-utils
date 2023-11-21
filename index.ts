@@ -4,7 +4,7 @@ import { parseAsset } from './parser'
 import { getAddress } from 'ethers'
 
 const program = new Command()
-program.name('account').description('Arkis CLI tools for managing margin accounts').version('1.1.0')
+program.name('account').description('Arkis CLI tools for managing margin accounts').version('1.1.1')
 
 program
   .command('register')
