@@ -26,7 +26,7 @@ export async function register(
   })
 
   const promises = new Array<Promise<void>>()
-  for (const { abi: token, amount } of collateral) {
+  for (const { abi: token, amount, token: address } of collateral) {
     promises.push(
       topUpBalance({
         token,
@@ -35,13 +35,15 @@ export async function register(
         amount,
       }),
     )
-    promises.push(
-      maxApprove({
-        token,
-        from: signer,
-        to: await dispatcher.getAddress(),
-      }),
-    )
+    if (!isEth(address)) {
+      promises.push(
+        maxApprove({
+          token,
+          from: signer,
+          to: await dispatcher.getAddress(),
+        }),
+      )
+    }
   }
   await Promise.all(promises)
 
