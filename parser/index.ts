@@ -2,7 +2,7 @@ import { Contract, parseUnits } from 'ethers'
 import { getToken, getProvider, getAbi } from '../config'
 import { Asset } from '../types'
 
-const regex = /^([1-9]\d*\.?\d*)\s(\w+)$/
+const regex = /^(\d?[1-9]*\.?\d*)\s(\w+)$/
 
 export function parseAsset(str: string): Asset {
   const match = regex.exec(str)
@@ -17,7 +17,7 @@ export function parseAsset(str: string): Asset {
   return {
     abi: new Contract(token.address, getAbi('erc20'), getProvider()),
     token: token.address,
-    symbol,
+    symbol: str,
     decimals: token.decimals,
     amount,
   }

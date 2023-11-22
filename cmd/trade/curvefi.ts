@@ -1,4 +1,4 @@
-import { Contract, Interface, parseUnits } from 'ethers'
+import { Contract, Interface } from 'ethers'
 import { getAbi, getProvider, getToken, isEth } from '../../config'
 import { Asset, Command } from '../../types'
 
