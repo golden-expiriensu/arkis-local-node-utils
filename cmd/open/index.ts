@@ -1,8 +1,9 @@
 import { Contract, Signer } from 'ethers'
 import { getAbi, getDispatcher, getOwner, getProvider, getTreasure } from '../../config'
-import { topUpBalance, topUpEthBalance } from '../../wallet'
+import { topUpEthBalance } from '../../wallet'
 import { createAllocationPlan } from './createAllocationPlan'
 import color from '@colors/colors'
+import { depositToPool } from './depositToPool'
 
 export async function open(account: string, treasure?: Signer): Promise<void> {
   const owner = getOwner()
@@ -17,14 +18,8 @@ export async function open(account: string, treasure?: Signer): Promise<void> {
       amount: 0n,
     }),
   ]
-  const leverage = await acc.leverage()
   promises.push(
-    topUpBalance({
-      token: new Contract(leverage.token, getAbi('erc20'), getProvider()),
-      from: treasure,
-      to: await dispatcher.getAddress(),
-      amount: leverage.amount,
-    }),
+    depositToPool(await acc.leverage(), treasure),
   )
   await Promise.all(promises)
 

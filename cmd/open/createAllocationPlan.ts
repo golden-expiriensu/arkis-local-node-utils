@@ -14,7 +14,7 @@ export async function createAllocationPlan(account: string): Promise<Object> {
         },
         content: [
           {
-            sequence: [0],
+            sequence: [1, 0],
             increasePositionInstructions: [
               {
                 protocol: 'arkis.marginaccount',
@@ -35,7 +35,26 @@ export async function createAllocationPlan(account: string): Promise<Object> {
                 },
               },
             ],
-            decreasePositionInstructions: [],
+            decreasePositionInstructions: [
+              {
+                protocol: 'arkis.liquiditypool',
+                request: {
+                  descriptor: {
+                    poolId: 0,
+                    extraData: '0x',
+                  },
+                  liquidity: leverage.amount,
+                  minOutput: [
+                    {
+                      // NOTE: please don't touch this if you don't want to traumatize ethers@6
+                      token: leverage.token,
+                      // NOTE: please don't touch this if you don't want to traumatize ethers@6
+                      amount: leverage.amount,
+                    },
+                  ],
+                },
+              }
+            ],
             exchangeInstructions: [],
             exchangeAllInstructions: [],
           },
