@@ -26,6 +26,15 @@ export async function depositToPool(
   })
 
   console.log(`Depositing ${await token.symbol()} to liquidity pool...`)
-  const tx = await pool.deposit(asset.amount, [])
-  await tx.wait()
+  try {
+    const tx = await pool.deposit(asset.amount, [])
+    await tx.wait()
+  } catch (err) {
+    if (err.info.error.data === '0xc4c6ecd9') {
+      throw new Error(`Total deposit threshold in ${await token.symbol()} pool has been exceeded, either use different token as leverage, increase threshold or return allocated money to pool`)
+    }
+    console.log(err)
+    throw err
+  }
+  console.log('Deposited successfully, leverage can be allocated')
 }
