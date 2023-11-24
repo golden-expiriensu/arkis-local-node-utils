@@ -29,6 +29,13 @@ bun index.ts o 0x94f4C1743d0a8d4F1b7792DD34Cf5A9F5ea97BCD
 bun index.ts r 0x61d74003A35c7F0DE1EfaCbFc4d38f84d357F2E2 -l '5000 USDC' -c '3 WETH' -o
 ```
 
+### Sign account closing request
+Signs constructed payload for closing request. Structure (address account, address recipient, uint256 invalidationBlock) is ABI encoded and then signed using specified private key.
+```sh
+bun index.ts s 0x5cAe5d132948Feaf75c9E48Cd71A2ACC95099670 -k 0xebee0aa9a82b8d6fb5229540bea3f801151ce24ed223b799f809f5f4fad4ceb7 -b 12345
+```
+Recipient will be set to account owner if not specified.
+
 ### Increase position in CurveFi
 Using specific tokens with specific amounts:
 ```sh

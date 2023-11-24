@@ -1,11 +1,11 @@
-import { Contract, Signer } from "ethers";
-import { getAbi, getPoolRegistry, getProvider } from "../../config";
-import { maxApprove } from "../../wallet";
+import { Contract, Signer } from 'ethers'
+import { getAbi, getPoolRegistry, getProvider } from '../../config'
+import { maxApprove } from '../../wallet'
 
 export async function depositToPool(
   asset: {
-    token: string,
-    amount: bigint,
+    token: string
+    amount: bigint
   },
   treasure: Signer,
 ): Promise<void> {
@@ -14,7 +14,7 @@ export async function depositToPool(
   const pool = new Contract(poolAddress, getAbi('pool'), treasure)
   const token = new Contract(asset.token, getAbi('erc20'), getProvider())
 
-  if (await token.balanceOf(poolAddress) >= asset.amount) {
+  if ((await token.balanceOf(poolAddress)) >= asset.amount) {
     console.log(`${await token.symbol()} pool already has enough balance`)
     return
   }
@@ -31,7 +31,9 @@ export async function depositToPool(
     await tx.wait()
   } catch (err) {
     if (err.info.error.data === '0xc4c6ecd9') {
-      throw new Error(`Total deposit threshold in ${await token.symbol()} pool has been exceeded, either use different token as leverage, increase threshold or return allocated money to pool`)
+      throw new Error(
+        `Total deposit threshold in ${await token.symbol()} pool has been exceeded, either use different token as leverage, increase threshold or return allocated money to pool`,
+      )
     }
     console.log(err)
     throw err

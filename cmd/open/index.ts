@@ -18,9 +18,7 @@ export async function open(account: string, treasure?: Signer): Promise<void> {
       amount: 0n,
     }),
   ]
-  promises.push(
-    depositToPool(await acc.leverage(), treasure),
-  )
+  promises.push(depositToPool(await acc.leverage(), treasure))
   await Promise.all(promises)
 
   console.log('Submitting the allocation plan...')

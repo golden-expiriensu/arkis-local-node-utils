@@ -53,7 +53,7 @@ export async function createAllocationPlan(account: string): Promise<Object> {
                     },
                   ],
                 },
-              }
+              },
             ],
             exchangeInstructions: [],
             exchangeAllInstructions: [],

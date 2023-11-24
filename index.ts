@@ -1,10 +1,10 @@
 import { Command, Option } from 'commander'
-import { register, open, increasePosition, decreasePosition } from './cmd'
+import { register, open, increasePosition, decreasePosition, signCloseReq } from './cmd'
 import { parseAsset } from './parser'
 import { getAddress } from 'ethers'
 
 const program = new Command()
-program.name('account').description('Arkis CLI tools for managing margin accounts').version('1.1.1')
+program.name('account').description('Arkis CLI tools for managing margin accounts').version('1.2.0')
 
 program
   .command('register')
@@ -39,12 +39,36 @@ program
   })
 
 program
+  .command('sign')
+  .alias('s')
+  .description('Construct and sign request to close margin account')
+  .argument('<account>', 'Address of the opened margin account which you would like to close')
+  .requiredOption('-k, --private-key <key>', 'Private key of the owner of the margin account')
+  .requiredOption('-b, --invalidation-block <number>', 'Block after which the signature will be expired')
+  .option('-r, --recipient <address>', 'Recipient of the assets from the account, owner of account by default')
+  .action(async (account: string, options: any) => {
+    try {
+      await signCloseReq({
+        account,
+        privateKey: options.privateKey,
+        recipient: options.recipient,
+        untilBlock: options.invalidationBlock,
+      })
+    } catch (err) {
+      program.error(`error: ${err.message}`)
+    }
+  })
+
+program
   .command('trade')
   .alias('t')
   .description('Perform a trade operation on the margin account')
   .argument('<account>', 'Address of the margin account')
   .argument('<protocol>', 'Protocol in which trade will be performed, available protocols: "curvefi"')
-  .argument('<pool>', 'Liquidity pool in which trade will be performed, available pools: "3pool", "tricrypto", "steth", "frax_usdc"')
+  .argument(
+    '<pool>',
+    'Liquidity pool in which trade will be performed, available pools: "3pool", "tricrypto", "steth", "frax_usdc"',
+  )
   .addOption(
     new Option('-ip, --increase-position [assets...]', 'Assets to deposit into the liquidity pool').conflicts(
       'decreasePosition',
